@@ -13,16 +13,108 @@ pw=""
 
 def admin():
     adminWindow=Tk()
+    adminWindow.title("관리자 모드")
+
+    menu=ttk.Notebook(adminWindow, width=300, height=300)
         
     frame1=Frame(adminWindow)
     frame2=Frame(adminWindow)
     frame3=Frame(adminWindow)
     frame4=Frame(adminWindow)
     frame5=Frame(adminWindow)
-
     frame6=Frame(adminWindow)
 
-    menu=ttk.Notebook(adminWindow, width=300, height=300)
+    #동물관리
+    #동물(개체/종류)추가
+   
+    def addAnm():
+        addAnmWindow=Tk()
+        addAnmWindow.title("동물 개체 등록")
+
+        #동물 개체 추가
+        name=Label(addAnmWindow,text="이름")
+        name.grid(row=2, column=0)
+
+        nameentry=Entry(addAnmWindow)
+        nameentry.grid(row=2, column=1)
+
+        gender=Label(addAnmWindow,text="성별")
+        gender.grid(row=4,column=0)
+        gender=StringVar()
+
+        genderM=Radiobutton(addAnmWindow, text='남',variable=gender)
+        genderF=Radiobutton(addAnmWindow, text='여',variable=gender)
+
+        genderM.grid(row=4, column=1,sticky='w',padx=50)
+        genderF.grid(row=4, column=1,sticky='e',padx=50)
+
+        birth=Label(addAnmWindow,text="생년월일")
+        birth.grid(row=6, column=0)
+
+        birthframe=Frame(addAnmWindow)
+        birthframe.grid(row=6, column=1)
+
+        yearBox=ttk.Combobox(birthframe,height=0, width=4, values=[i for i in range(1950,2023)])
+        yearBox.grid(row=0, column=0)
+
+        year=Label(birthframe,text="년")
+        year.grid(row=0, column=1)
+
+        monthBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,13)])
+        monthBox.grid(row=0, column=2)
+
+        month=Label(birthframe,text="월")
+        month.grid(row=0, column=3)
+
+        dayBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,32)])
+        dayBox.grid(row=0, column=4)
+
+        day=Label(birthframe,text="일")
+        day.grid(row=0, column=5)
+
+        breed=Label(addAnmWindow,text="품종")
+        breed.grid(row=9, column=0)
+
+        breedentry=Entry(addAnmWindow)
+        breedentry.grid(row=9, column=1)
+
+        register=Button(addAnmWindow, text="등록하기")
+        register.grid(row=11, column=1, sticky=W+E+N+S)
+
+    #동물 종류 추가
+    def addBreed():
+        addBreedWindow=Tk()
+        addBreedWindow.title("동물 품종 추가")
+
+        breed=Label(addBreedWindow,text="품종")
+        breed.grid(row=2, column=0)
+
+        breedEntry=Entry(addBreedWindow)
+        breedEntry.grid(row=2, column=1)
+
+        food=Label(addBreedWindow,text="먹이")
+        food.grid(row=4, column=0)
+
+        foodEntry=Entry(addBreedWindow)
+        foodEntry.grid(row=4, column=1)
+
+        zone=Label(addBreedWindow,text="구역")
+        zone.grid(row=6, column=0)
+
+        zoneEntry=Entry(addBreedWindow)
+        zoneEntry.grid(row=6, column=1)
+
+        register=Button(addBreedWindow, text="추가하기")
+        register.grid(row=8, column=1, sticky=W+E+N+S)
+
+
+    
+    addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
+    addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
+
+    addAnmButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
+    addBreedButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
+
 
     menu.add(frame1,text="동물 관리")
     menu.add(frame2,text="직원 관리")
@@ -34,6 +126,117 @@ def admin():
     menu.pack()
 
     adminWindow.mainloop()
+
+
+    #직원관리
+    #직원 추가/삭제
+    def manageStaff():
+        addAnmWindow=Tk()
+        addAnmWindow.title("직원 관리")
+
+        #직원 등록
+        name=Label(addAnmWindow,text="이름")
+        name.grid(row=2, column=0)
+
+        nameentry=Entry(addAnmWindow)
+        nameentry.grid(row=2, column=1)
+
+        birth=Label(addAnmWindow,text="생년월일")
+        birth.grid(row=4, column=0)
+
+        birthframe=Frame(addAnmWindow)
+        birthframe.grid(row=4, column=1)
+
+        yearBox=ttk.Combobox(birthframe,height=0, width=4, values=[i for i in range(1950,2023)])
+        yearBox.grid(row=0, column=0)
+
+        year=Label(birthframe,text="년")
+        year.grid(row=0, column=1)
+
+        monthBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,13)])
+        monthBox.grid(row=0, column=2)
+
+        month=Label(birthframe,text="월")
+        month.grid(row=0, column=3)
+
+        dayBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,32)])
+        dayBox.grid(row=0, column=4)
+
+        day=Label(birthframe,text="일")
+        day.grid(row=0, column=5)
+
+        phone=Label(addAnmWindow,text="전화번호")
+        phone.grid(row=6, column=0)
+
+        phoneentry=Entry(addAnmWindow)
+        phoneentry.grid(row=9, column=1)
+
+        zone=Label(addAnmWindow,text="담당구역")
+        zone.grid(row=8, column=0)
+
+        zone=Entry(addAnmWindow)
+        zone.grid(row=8, column=1)
+
+
+        register=Button(addAnmWindow, text="등록하기")
+        register.grid(row=11, column=1, sticky=W+E+N+S)
+
+    #동물 종류 추가
+    def addBreed():
+        addBreedWindow=Tk()
+        addBreedWindow.title("동물 품종 추가")
+
+        breed=Label(addBreedWindow,text="품종")
+        breed.grid(row=2, column=0)
+
+        breedEntry=Entry(addBreedWindow)
+        breedEntry.grid(row=2, column=1)
+
+        food=Label(addBreedWindow,text="먹이")
+        food.grid(row=4, column=0)
+
+        foodEntry=Entry(addBreedWindow)
+        foodEntry.grid(row=4, column=1)
+
+        zone=Label(addBreedWindow,text="구역")
+        zone.grid(row=6, column=0)
+
+        zoneEntry=Entry(addBreedWindow)
+        zoneEntry.grid(row=6, column=1)
+
+        register=Button(addBreedWindow, text="추가하기")
+        register.grid(row=8, column=1, sticky=W+E+N+S)
+
+
+    
+    addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
+    addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
+
+    addAnmButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
+    addBreedButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
+
+
+
+
+
+
+
+    #주차관리
+
+
+
+
+    #고객관리
+
+
+
+
+    #예매관리
+
+
+
+
+    #보고서
 
 
 #회원가입
@@ -303,7 +506,7 @@ image = []
 for i in range(12):
     photoframe=Frame(anmFrame, bg="skyblue")
     
-    image.append(ImageTk.PhotoImage(Image.open('C:\\Users\\이예림\\Desktop\\zoo\\lion.png').resize((94,100))))
+    image.append(ImageTk.PhotoImage(Image.open(r'C:\Users\이예림\git\school\secondGrade\databaseProject\곰.png').resize((94,100))))
     img = Button(photoframe,image=image[i],bg=c[i%len(c)])
     name=Label(photoframe,text='lion')
     img.pack()
