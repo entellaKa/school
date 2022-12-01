@@ -215,7 +215,22 @@ def admin():
 
     #예매관리
 
-    
+    #예약목록 테이블
+    rsvColumn =["예약자명","예약일자","인원"]
+    rsvtable=ttk.Treeview(frame5, columns=rsvColumn)
+
+    rsvtable.column("#0",width=10, anchor="center")
+    rsvtable.heading("#0", text="index")
+
+    for i in rsvColumn:
+        rsvtable.column(i,width=100, anchor="center")
+        rsvtable.heading(i, text=i)
+
+
+    rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
+
+    rsvtable.pack()
+
 
 
     #보고서
@@ -756,23 +771,20 @@ if id=="":
 
 
 #테이블
-table=ttk.Treeview(frame4, columns=["예약자명","예약일자","인원"])
 
-table.column("#0",width=10, anchor="center")
-table.heading("#0", text="index")
+rsvColumn =["예약자명","예약일자","인원"]
+rsvtable=ttk.Treeview(frame4, columns=rsvColumn)
 
-table.column("예약자명",width=100, anchor="center")
-table.heading("예약자명", text="예약자명")
+rsvtable.column("#0",width=10, anchor="center")
+rsvtable.heading("#0", text="index")
 
-table.column("예약일자",width=100, anchor="center")
-table.heading("예약일자", text="예약일자")
+for i in rsvColumn:
+    rsvtable.column(i,width=100, anchor="center")
+    rsvtable.heading(i, text=i)
 
-table.column("인원",width=100, anchor="center")
-table.heading("인원", text="인원")
+rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
 
-table.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
-
-table.pack()
+rsvtable.pack()
 searchButton.pack()
 
 window.mainloop()
