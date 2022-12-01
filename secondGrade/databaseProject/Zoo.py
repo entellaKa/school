@@ -116,35 +116,24 @@ def admin():
     addBreedButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
 
 
-    menu.add(frame1,text="동물 관리")
-    menu.add(frame2,text="직원 관리")
-    menu.add(frame3,text="주차 관리")
-    menu.add(frame4,text="고객 관리")
-    menu.add(frame5,text="예매 관리")
-    menu.add(frame6,text="보고서")
-
-    menu.pack()
-
-    adminWindow.mainloop()
-
 
     #직원관리
     #직원 추가/삭제
     def manageStaff():
-        addAnmWindow=Tk()
-        addAnmWindow.title("직원 관리")
+        addStaffWindow=Tk()
+        addStaffWindow.title("직원 추가")
 
         #직원 등록
-        name=Label(addAnmWindow,text="이름")
+        name=Label(addStaffWindow,text="이름")
         name.grid(row=2, column=0)
 
-        nameentry=Entry(addAnmWindow)
+        nameentry=Entry(addStaffWindow)
         nameentry.grid(row=2, column=1)
 
-        birth=Label(addAnmWindow,text="생년월일")
+        birth=Label(addStaffWindow,text="생년월일")
         birth.grid(row=4, column=0)
 
-        birthframe=Frame(addAnmWindow)
+        birthframe=Frame(addStaffWindow)
         birthframe.grid(row=4, column=1)
 
         yearBox=ttk.Combobox(birthframe,height=0, width=4, values=[i for i in range(1950,2023)])
@@ -165,57 +154,50 @@ def admin():
         day=Label(birthframe,text="일")
         day.grid(row=0, column=5)
 
-        phone=Label(addAnmWindow,text="전화번호")
+        phone=Label(addStaffWindow,text="전화번호")
         phone.grid(row=6, column=0)
 
-        phoneentry=Entry(addAnmWindow)
+        phoneentry=Entry(addStaffWindow)
         phoneentry.grid(row=6, column=1)
 
-        zoneM=Label(addAnmWindow,text="담당구역")
+        zoneM=Label(addStaffWindow,text="담당구역")
         zoneM.grid(row=8, column=0)
 
-        zoneM=Entry(addAnmWindow)
+        zoneM=Entry(addStaffWindow)
         zoneM.grid(row=8, column=1)
 
+        account=Label(addStaffWindow,text="계좌번호")
+        account.grid(row=10, column=0)
 
-        register=Button(addAnmWindow, text="등록하기")
-        register.grid(row=10, column=1, sticky=W+E+N+S)
+        account=Entry(addStaffWindow)
+        account.grid(row=10, column=1)
 
-    #동물 종류 추가
-    def addBreed():
-        addBreedWindow=Tk()
-        addBreedWindow.title("동물 품종 추가")
 
-        breed=Label(addBreedWindow,text="품종")
-        breed.grid(row=2, column=0)
+        register=Button(addStaffWindow, text="등록하기")
+        register.grid(row=12, column=1, sticky=W+E+N+S)
 
-        breedEntry=Entry(addBreedWindow)
-        breedEntry.grid(row=2, column=1)
+    #직원 검색/삭제
+    def searchStaff():
+        searchStaffWindow=Tk()
+        searchStaffWindow.title("직원 검색")
 
-        food=Label(addBreedWindow,text="먹이")
-        food.grid(row=4, column=0)
+        searchS=Label(searchStaffWindow,text="직원명")
+        searchS.grid(row=2, column=0)
 
-        foodEntry=Entry(addBreedWindow)
-        foodEntry.grid(row=4, column=1)
+        searchSEntry=Entry(searchStaffWindow)
+        searchSEntry.grid(row=2, column=1)
 
-        zone=Label(addBreedWindow,text="구역")
-        zone.grid(row=6, column=0)
+        searchButton=Button(searchStaffWindow,text="검색")
+        searchButton.grid(row=2, column=2)
 
-        zoneEntry=Entry(addBreedWindow)
-        zoneEntry.grid(row=6, column=1)
-
-        register=Button(addBreedWindow, text="추가하기")
+        register=Button(searchStaffWindow, text="삭제하기")
         register.grid(row=8, column=1, sticky=W+E+N+S)
-
-
     
-    addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
-    addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
+    addStaffButton=Button(frame2,text="새로운 직원\n등록하기",command=manageStaff ,bg="white")
+    manageStaffButton=Button(frame2,text="직원 관리",command=searchStaff ,bg="white")
 
-    addAnmButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
-    addBreedButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
-
-
+    addStaffButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
+    manageStaffButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
 
 
 
@@ -233,11 +215,22 @@ def admin():
 
     #예매관리
 
-
+    
 
 
     #보고서
 
+
+    menu.add(frame1,text="동물 관리")
+    menu.add(frame2,text="직원 관리")
+    menu.add(frame3,text="주차 관리")
+    menu.add(frame4,text="고객 관리")
+    menu.add(frame5,text="예매 관리")
+    menu.add(frame6,text="보고서")
+
+    menu.pack()
+
+    adminWindow.mainloop()
 
 #회원가입
 def sign():
