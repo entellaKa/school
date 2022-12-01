@@ -1,9 +1,9 @@
 from tkinter import *
-from tkinter import ttk, messagebox
-from tkinter import font
+from tkinter import ttk, messagebox, font
 from PIL import ImageTk,Image
 import pymysql
-
+import requests
+from io import BytesIO
 id=""
 pw=""
 
@@ -182,7 +182,7 @@ def Login():
 #홈 화면
 
 
-con = pymysql.connect(host='localhost', user='root', password='0000',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
+con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
 
 window=Tk()
 window.title("Tukorea Zoo")
@@ -302,8 +302,9 @@ c=['red','orange','yellow','green','blue','purple']
 image = []
 for i in range(12):
     photoframe=Frame(anmFrame, bg="skyblue")
-    
-    image.append(ImageTk.PhotoImage(Image.open('C:\\Users\\이예림\\Desktop\\zoo\\lion.png').resize((94,100))))
+    url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format("토끼")
+    res = requests.get(url)
+    image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
     img = Button(photoframe,image=image[i],bg=c[i%len(c)])
     name=Label(photoframe,text='lion')
     img.pack()
