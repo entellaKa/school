@@ -169,17 +169,17 @@ def admin():
         phone.grid(row=6, column=0)
 
         phoneentry=Entry(addAnmWindow)
-        phoneentry.grid(row=9, column=1)
+        phoneentry.grid(row=6, column=1)
 
-        zone=Label(addAnmWindow,text="담당구역")
-        zone.grid(row=8, column=0)
+        zoneM=Label(addAnmWindow,text="담당구역")
+        zoneM.grid(row=8, column=0)
 
-        zone=Entry(addAnmWindow)
-        zone.grid(row=8, column=1)
+        zoneM=Entry(addAnmWindow)
+        zoneM.grid(row=8, column=1)
 
 
         register=Button(addAnmWindow, text="등록하기")
-        register.grid(row=11, column=1, sticky=W+E+N+S)
+        register.grid(row=10, column=1, sticky=W+E+N+S)
 
     #동물 종류 추가
     def addBreed():
