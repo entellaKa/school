@@ -385,7 +385,7 @@ def Login():
 #홈 화면
 
 
-con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
+con = pymysql.connect(host='localhost', user='root', password='0000',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
 
 window=Tk()
 window.title("Tukorea Zoo")
@@ -479,19 +479,8 @@ areaframe.pack(fill="both",expand=True)
 for i in range(6):
     areabutton[i].grid(row=i%3,column=i//3, sticky="news")
 
-'''
-animalphoto=[]
-animalname=["lion","토끼","곰"]
-for i in range(len(animalname)):
-    photoframe=Frame(frame2)
-    image1=ImageTk.PhotoImage(Image.open(r'C:\\Users\\이예림\\Desktop\\zoo\\lion.png'))
-    animalphoto.append(Label(photoframe,image=image1))
-    name=Label(photoframe,text=animalname[i])
-    animalphoto[i].pack()
-    name.pack()
-    photoframe.pack()
 
-'''
+
 # animalFrame=Frame(frame2, bg="yellow")
 # animalFrame.columnconfigure(tuple(range(4)),weight=1)
 # animalFrame.pack()
@@ -505,7 +494,10 @@ c=['red','orange','yellow','green','blue','purple']
 image = []
 for i in range(12):
     photoframe=Frame(anmFrame, bg="skyblue")
-    
+    url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(animalname[i%len(animalname)])
+    res = requests.get(url)
+    image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+
     img = Button(photoframe,image=image[i],bg=c[i%len(c)])
     name=Label(photoframe,text='lion')
     img.pack()
