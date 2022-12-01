@@ -4,10 +4,17 @@ from PIL import ImageTk,Image
 import pymysql
 import requests
 from io import BytesIO
+
 id=""
-pw=""
 
-
+#로그인/로그아웃
+def Logout():
+    global id
+    if id == "":
+        Login()
+    else:
+        loginButton['text']="로그인"
+        id = ""
 
 #관리자 모드
 
@@ -251,6 +258,7 @@ def admin():
 def sign():
     idCheck = False
     signWindow = Tk()
+    signWindow.geometry("320x178-150+150")
     
     ID=Label(signWindow,text="ID")
     ID.grid(row=0, column=0)
@@ -263,15 +271,12 @@ def sign():
         sql = "SELECT 아이디 FROM 회원 where 아이디='"+IDentry.get()+"'"
         cur.execute(sql)
         rows = cur.fetchall()
-        if rows==None:
+        if len(rows)==0:
             messagebox.showinfo("중복확인","사용 가능한 아이디입니다.")
             IDentry['state']="disabled"
             idCheck = TRUE
-            
         else:
             messagebox.showinfo("중복확인","이미 존재하는 아이디입니다.")
-        print(rows)     # 전체 rows 
-
 
     IDCheck=Button(signWindow, text="중복확인", command=checkID)
     IDCheck.grid(row=0, column=2)
@@ -393,7 +398,7 @@ def Login():
 #홈 화면
 
 
-con = pymysql.connect(host='localhost', user='root', password='0000',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
+con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
 
 window=Tk()
 window.title("Tukorea Zoo")
@@ -413,7 +418,7 @@ for i in range(len(titletext)):
 menu=ttk.Notebook(window, width=400, height=300)
 
 loginframe=Frame(window)
-loginButton = Button(loginframe, text="로그인", command=Login)
+loginButton = Button(loginframe, text="로그인", command=Logout)
 
 adminButton=Button(loginframe, text="관리자모드", borderwidth=0, command=admin)
 adminButton.pack(side="left")
@@ -577,16 +582,8 @@ def memberresv():
 
     resv=Button(reservationwindow, text="확인", command=memberresv)
     resv.grid(row=8, column=1, sticky=W+E+N+S)
-'''    
-    print(id)
-    print(type(id))
-    if id=="":
-        Login()
-        if id!="":
-            reservationwindow.mainloop()
-    else:
-        reservationwindow.mainloop()
-'''
+
+    reservationwindow.mainloop()
 
 #로그인
 
@@ -594,6 +591,8 @@ def memberLoginFunc():
     print(id)
     if id=='':
         Login()
+        if id!="":
+            memberresv()
     else:
         memberresv()
 
