@@ -84,7 +84,27 @@ def admin():
         breedentry=Entry(addAnmWindow)
         breedentry.grid(row=9, column=1)
 
-        register=Button(addAnmWindow, text="등록하기")
+        tamer=Label(addAnmWindow,text="담당 사육사")
+        tamer.grid(row=10, column=0)
+
+        tamerentry=Entry(addAnmWindow)
+        tamerentry.grid(row=10, column=1)
+
+        #이름 생일 번호 성별 사육사
+        def animalRegisterFunc():
+            birth = "{}-{}-{}".format(year.getint(), month.getint(), day.getint())
+            selectBreedNoSQL = "select 동물번호 from 종류 where 종류 = '{}'".format(breedentry.get())
+            cur = con.cursor()
+            cur.execute(selectBreedNoSQL)
+            breed = cur.fetchone()            
+            selectTamerNoSQL = "select 직원번호 from 직원 where 이름 = '{}'".format(tamerentry.get())
+            cur.execute(selectTamerNoSQL)
+            tamer = cur.fetchone()
+            insertSqQL = "insert into 동물 values(0,'{}',{},'{}','{}','{}');".format(nameentry.get(), birth, breed[0], genderM.getboolean, tamer[0])
+            cur.execute(insertSqQL)
+            con.commit()
+
+        register=Button(addAnmWindow, text="등록하기", command=animalRegisterFunc)
         register.grid(row=11, column=1, sticky=W+E+N+S)
 
     #동물 종류 추가
@@ -110,7 +130,18 @@ def admin():
         zoneEntry=Entry(addBreedWindow)
         zoneEntry.grid(row=6, column=1)
 
-        register=Button(addBreedWindow, text="추가하기")
+        #품종 먹이 구역
+        def breedRegisterFunc():
+            birth = "{}-{}-{}".format(year.getint(), month.getint(), day.getint())
+            selectBreedNoSQL = "select 구역번호 from 구역 where 구역이름 = '{}'".format(zone.get())
+            cur = con.cursor()
+            cur.execute(selectBreedNoSQL)
+            area = cur.fetchone()
+            insertSqQL = "insert into 종류 values(0,'{}',{},'{}','{}','{}');".format(breedEntry.get(), foodEntry.get(), area[0])
+            cur.execute(insertSqQL)
+            con.commit()
+
+        register=Button(addBreedWindow, text="추가하기", command=breedRegisterFunc)
         register.grid(row=8, column=1, sticky=W+E+N+S)
 
     addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
@@ -181,32 +212,6 @@ def admin():
 
         register=Button(addAnmWindow, text="등록하기")
         register.grid(row=10, column=1, sticky=W+E+N+S)
-
-    #동물 종류 추가
-    def addBreed():
-        addBreedWindow=Tk()
-        addBreedWindow.title("동물 품종 추가")
-
-        breed=Label(addBreedWindow,text="품종")
-        breed.grid(row=2, column=0)
-
-        breedEntry=Entry(addBreedWindow)
-        breedEntry.grid(row=2, column=1)
-
-        food=Label(addBreedWindow,text="먹이")
-        food.grid(row=4, column=0)
-
-        foodEntry=Entry(addBreedWindow)
-        foodEntry.grid(row=4, column=1)
-
-        zone=Label(addBreedWindow,text="구역")
-        zone.grid(row=6, column=0)
-
-        zoneEntry=Entry(addBreedWindow)
-        zoneEntry.grid(row=6, column=1)
-
-        register=Button(addBreedWindow, text="추가하기")
-        register.grid(row=8, column=1, sticky=W+E+N+S)
 
     addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
     addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
