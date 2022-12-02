@@ -225,9 +225,6 @@ def admin():
 
 
 
-
-
-
     #주차관리
 
 
@@ -273,20 +270,17 @@ def sign():
     IDCheck=Button(signWindow, text="중복확인", command=checkID)
     IDCheck.grid(row=0, column=2)
 
-
     PW=Label(signWindow,text="PW")
     PW.grid(row=1,column=0)
 
     PWentry=Entry(signWindow, show="*")
     PWentry.grid(row=1, column=1)
 
-
     PWCheck=Label(signWindow,text="PW 확인")
     PWCheck.grid(row=2,column=0)
 
     PWCheckentry=Entry(signWindow, show="*")
     PWCheckentry.grid(row=2, column=1)
-
 
     name=Label(signWindow,text="이름")
     name.grid(row=3, column=0)
@@ -343,7 +337,6 @@ def sign():
         else:
             messagebox.showinfo("가입실패","기입되지않은 항목이 있습니다.")
 
-            
     # IDentry=Entry(signWindow)
     # IDentry.grid(row=0, column=1)
     sign=Button(signWindow, text="가입", command=signUp)
@@ -386,10 +379,7 @@ def Login():
 
     loginWindow.mainloop()
 
-
 #홈 화면
-
-
 con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
 
 window=Tk()
