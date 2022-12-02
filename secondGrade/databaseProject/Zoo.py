@@ -33,7 +33,6 @@ def admin():
 
     #동물관리
     #동물(개체/종류)추가
-   
     def addAnm():
         addAnmWindow=Tk()
         addAnmWindow.title("동물 개체 등록")
@@ -114,14 +113,11 @@ def admin():
         register=Button(addBreedWindow, text="추가하기")
         register.grid(row=8, column=1, sticky=W+E+N+S)
 
-
-    
     addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
     addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
 
     addAnmButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
     addBreedButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
-
 
     menu.add(frame1,text="동물 관리")
     menu.add(frame2,text="직원 관리")
@@ -133,7 +129,6 @@ def admin():
     menu.pack()
 
     adminWindow.mainloop()
-
 
     #직원관리
     #직원 추가/삭제
@@ -184,7 +179,6 @@ def admin():
         zoneM=Entry(addAnmWindow)
         zoneM.grid(row=8, column=1)
 
-
         register=Button(addAnmWindow, text="등록하기")
         register.grid(row=10, column=1, sticky=W+E+N+S)
 
@@ -214,16 +208,11 @@ def admin():
         register=Button(addBreedWindow, text="추가하기")
         register.grid(row=8, column=1, sticky=W+E+N+S)
 
-
-    
     addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
     addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
 
     addAnmButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
     addBreedButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
-
-
-
 
     #주차관리
 
@@ -419,26 +408,110 @@ menu.add(frame4,text="예매 내역")
 def mapA():
     mapAWindow=Tk()
     mapAWindow.title("꼬마동물마을")
-    
+
+    mapAFrame = Frame(mapAWindow)
+
+    cur = con.cursor()
+    sql = "select 이름 from 개체 where 구역번호 = 1"
+    cur.execute(sql)
+    rows = cur.fetchall()
+
+    for i in rows:
+        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
+        res = requests.get(url)
+        image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+        pic = Label(mapAFrame, image=image[i])
+        pic.pack()
+
 def mapB():
     mapBWindow=Tk()
     mapBWindow.title("원숭이마을")
+
+    mapBFrame = Frame(mapBWindow)
+
+    cur = con.cursor()
+    sql = "select 이름 from 개체 where 구역번호 = 2"
+    cur.execute(sql)
+    rows = cur.fetchall()
+
+    for i in rows:
+        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
+        res = requests.get(url)
+        image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+        pic = Label(mapBFrame, image=image[i])
+        pic.pack()
 
 def mapC():
     mapCWindow=Tk()
     mapCWindow.title("코끼리마을")
 
+    mapCFrame = Frame(mapCWindow)
+
+    cur = con.cursor()
+    sql = "select 이름 from 개체 where 구역번호 = 3"
+    cur.execute(sql)
+    rows = cur.fetchall()
+
+    for i in rows:
+        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
+        res = requests.get(url)
+        image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+        pic = Label(mapCFrame, image=image[i])
+        pic.pack()
+
 def mapD():
     mapDWindow=Tk()
     mapDWindow.title("맹수마을")
+
+    mapDFrame = Frame(mapDWindow)
+
+    cur = con.cursor()
+    sql = "select 이름 from 개체 where 구역번호 = 4"
+    cur.execute(sql)
+    rows = cur.fetchall()
+
+    for i in rows:
+        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
+        res = requests.get(url)
+        image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+        pic = Label(mapDFrame, image=image[i])
+        pic.pack()
 
 def mapE():
     mapEWindow=Tk()
     mapEWindow.title("초식동물마을")
 
+    mapEFrame = Frame(mapEWindow)
+
+    cur = con.cursor()
+    sql = "select 이름 from 개체 where 구역번호 = 5"
+    cur.execute(sql)
+    rows = cur.fetchall()
+
+    for i in rows:
+        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
+        res = requests.get(url)
+        image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+        pic = Label(mapEFrame, image=image[i])
+        pic.pack()
+
 def mapF():
     mapFWindow=Tk()
     mapFWindow.title("바다동물마을")
+
+    mapFFrame = Frame(mapFWindow)
+
+    cur = con.cursor()
+    sql = "select 이름 from 개체 where 구역번호 = 6"
+    cur.execute(sql)
+    rows = cur.fetchall()
+
+    for i in rows:
+        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
+        res = requests.get(url)
+        image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+        pic = Label(mapFFrame, image=image[i])
+        pic.pack()
 
 zoofont=font.Font(size=25)
 zoolabel=Label(frame1,text="지도",font=zoofont,fg="green",bg="white")
@@ -474,16 +547,11 @@ def animalInfo(name):
 #next버튼 prev버튼
 page = 0;
 def paging(b):
-#    if page==0 and b == 0:
     if b == 1 and 0<=page<=3:
         cur = con.cursor()
-        #sql = 'insert into 회원 values("{}","{}","{}","{}","{}",0,1)'.format(IDentry.get(), PWentry.get(), nameentry.get(), birth, phoneentry.get())
-        #cur.execute(sql)
         sql="select 이름 from 개체"
         cur.execute(sql)
         rows = cur.fetchall()
-        #print(rows) 
-        #con.commit()
         rows = rows[page*8:(page+1)*8]
 
         pictures = anmPicFrame.grid_slaves()
