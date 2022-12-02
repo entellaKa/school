@@ -431,6 +431,7 @@ menu.add(frame4,text="예매 내역")
 def mapA():
     mapAWindow=Tk()
     mapAWindow.title("꼬마동물마을")
+    
 def mapB():
     mapBWindow=Tk()
     mapBWindow.title("원숭이마을")
@@ -506,8 +507,6 @@ def paging(b):
             res = requests.get(url)
             image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
 
-
-
 #동물정보
 
 loginframe.pack(fill="x")
@@ -520,18 +519,14 @@ areaframe.pack(fill="both",expand=True)
 for i in range(6):
     areabutton[i].grid(row=i%3,column=i//3, sticky="news")
 
-
-
 # animalFrame=Frame(frame2, bg="yellow")
 # animalFrame.columnconfigure(tuple(range(4)),weight=1)
 # animalFrame.pack()
 
-
 anmPicFrame=Frame(frame2, bg="yellow")
 anmPicFrame.pack()
-
 animalname=["lion","토끼","곰"]
-c=['red','orange','yellow','green','blue','purple']
+c = ['red','orange','yellow','green','blue','purple']
 image = []
 for i in range(8):
     photoframe=Frame(anmPicFrame, bg="skyblue")
@@ -595,7 +590,6 @@ def memberresv():
 
     guestnum=Label(reservationwindow,text='방문 인원')
     guestnum.grid(row=4, column=0)
-
 
     adult=Label(reservationwindow, text="성인")
     adultEntry=Entry(reservationwindow, width=10)
@@ -677,9 +671,6 @@ def guestinfo():
     register=Button(guestinfoWindow, text="확인", command=guestresv)
     register.grid(row=8, column=1, sticky=W+E+N+S)
 
-
-
-
 #비회원 예매하기 창
 
 def guestresv():
@@ -709,7 +700,6 @@ def guestresv():
     day=Label(rsvDateframe,text="일")
     day.grid(row=0, column=8)
 
-
     #############################################################
     '''
     라디오버튼 - 도보/차량 고르기
@@ -730,7 +720,6 @@ def guestresv():
     guestnum=Label(reservationwindow,text='방문 인원')
     guestnum.grid(row=4, column=0)
 
-
     adult=Label(reservationwindow, text="성인")
     adultEntry=Entry(reservationwindow, width=10)
     adultnum=Label(reservationwindow, text="명")
@@ -738,7 +727,6 @@ def guestresv():
     adult.grid(row=4,column=1,padx=10,sticky='e')
     adultEntry.grid(row=4, column=2,padx=10)
     adultnum.grid(row=4, column=3,padx=10)
-
 
     kid=Label(reservationwindow, text="아이")
     kidEntry=Entry(reservationwindow,width=10)
@@ -754,7 +742,6 @@ def guestresv():
     reservationwindow.mainloop()
 guestButton=Button(frame3,text="비회원\n예매하기",command=guestinfo,bg="white")
 
-
 memberButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
 guestButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
 
@@ -765,7 +752,6 @@ def receipt(name, birth, number):
     globals.number = number
 
 #예매 내역
-
 def guestreceipt():
     receiptwindow=Tk()
 
@@ -777,46 +763,36 @@ def guestreceipt():
     nameentry=Entry(receiptwindow)
     nameentry.grid(row=0, column=1)
 
-
     guestbirth=Label(receiptwindow,text="생일")
     guestbirth.grid(row=1,column=0)
 
     birthentry=Entry(receiptwindow)
     birthentry.grid(row=1, column=1)
 
-
     guestnumber=Label(receiptwindow,text="번호")
     guestnumber.grid(row=2, column=0)
 
     numberentry=Entry(receiptwindow)
     numberentry.grid(row=2, column=1)
-
   
     searchreceipt=Button(receiptwindow, text="확인")
     searchreceipt.grid(row=3, column=1, sticky=W+E+N+S)
 
     receiptwindow.mainloop()
 
-
 searchButton=Button(frame4,text="비회원 조회하기",command=guestreceipt)
 if id=="":
     guestreceipt
 
-
 #테이블
-table=ttk.Treeview(frame4, columns=["예약자명","예약일자","인원"])
+columnname=["예약자명","예약일자","인원"]
+table=ttk.Treeview(frame4, columns=columnname)
 
 table.column("#0",width=10, anchor="center")
 table.heading("#0", text="index")
-
-table.column("예약자명",width=100, anchor="center")
-table.heading("예약자명", text="예약자명")
-
-table.column("예약일자",width=100, anchor="center")
-table.heading("예약일자", text="예약일자")
-
-table.column("인원",width=100, anchor="center")
-table.heading("인원", text="인원")
+for i in columnname:
+    table.column(i,width=100, anchor="center")
+    table.heading(i, text=i)
 
 table.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
 
