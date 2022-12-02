@@ -471,6 +471,42 @@ areaframe.columnconfigure(tuple(range(2)),weight=1)
 
 
 
+#동물 상세 정보
+def animalInfo(name):
+    infoWindow = Tk()
+    infoWindow.title("동물 정보")
+
+    url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(name)
+    res = requests.get(url)
+    image = ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100)))
+
+    name=Label(photoframe,text=name)
+    img = Label(photoframe,image=image,bg=c[i%len(c)])
+    img.pack(side="left")
+    name.pack()
+
+#next버튼 prev버튼
+page = 0;
+def paging(b):
+#    if page==0 and b == 0:
+    if b == 1 and 0<=page<=3:
+        cur = con.cursor()
+        #sql = 'insert into 회원 values("{}","{}","{}","{}","{}",0,1)'.format(IDentry.get(), PWentry.get(), nameentry.get(), birth, phoneentry.get())
+        #cur.execute(sql)
+        sql="select 이름 from 개체"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        #print(rows) 
+        #con.commit()
+        rows = rows[page*8:(page+1)*8]
+
+        pictures = anmPicFrame.grid_slaves()
+        for i in pictures:
+            i["image"] = url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(rows[i%len(rows)])
+            res = requests.get(url)
+            image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+
+
 
 #동물정보
 
@@ -491,23 +527,29 @@ for i in range(6):
 # animalFrame.pack()
 
 
-anmFrame=Frame(frame2, bg="yellow")
-anmFrame.pack(side="left",fill='both')
+anmPicFrame=Frame(frame2, bg="yellow")
+anmPicFrame.pack()
 
 animalname=["lion","토끼","곰"]
 c=['red','orange','yellow','green','blue','purple']
 image = []
-for i in range(12):
-    photoframe=Frame(anmFrame, bg="skyblue")
+for i in range(8):
+    photoframe=Frame(anmPicFrame, bg="skyblue")
     url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(animalname[i%len(animalname)])
     res = requests.get(url)
     image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
 
-    img = Button(photoframe,image=image[i],bg=c[i%len(c)])
-    name=Label(photoframe,text='lion')
+    name=Label(photoframe,text=animalname[i%3])
+    img = Button(photoframe,image=image[i],bg=c[i%len(c)], command=lambda: animalInfo(name["text"]))
     img.pack()
     name.pack()
     photoframe.grid(column=i%4, row=i//4)
+anmFrame=Frame(frame2, bg="blue")
+anmFrame.pack()
+prevButton = Button(anmFrame, text="<")
+nextButton = Button(anmFrame, text=">")
+prevButton.pack(side="left")
+nextButton.pack(side="right")
 
 #예매
 #회원/비회원 예매하기 선택, 날짜, 성인/아이, 도보/차량
