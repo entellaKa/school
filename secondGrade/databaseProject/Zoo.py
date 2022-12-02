@@ -425,8 +425,6 @@ menu.add(frame2,text="동물정보")
 menu.add(frame3,text="예매")
 menu.add(frame4,text="예매 내역")
 
-
-
 #동물원 소개
 def mapA():
     mapAWindow=Tk()
@@ -452,7 +450,6 @@ def mapF():
     mapFWindow=Tk()
     mapFWindow.title("바다동물마을")
 
-
 zoofont=font.Font(size=25)
 zoolabel=Label(frame1,text="지도",font=zoofont,fg="green",bg="white")
 areaframe=Frame(frame1,bg="gold")
@@ -469,8 +466,6 @@ for i in range(6):
 
 areaframe.rowconfigure(tuple(range(3)),weight=1)
 areaframe.columnconfigure(tuple(range(2)),weight=1)
-
-
 
 #동물 상세 정보
 def animalInfo(name):
@@ -508,7 +503,6 @@ def paging(b):
             image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
 
 #동물정보
-
 loginframe.pack(fill="x")
 titleframe.pack()
 loginButton.pack(side="right")
@@ -599,7 +593,6 @@ def memberresv():
     adultEntry.grid(row=4, column=2,padx=10)
     adultnum.grid(row=4, column=3,padx=10)
 
-
     kid=Label(reservationwindow, text="아이")
     kidEntry=Entry(reservationwindow,width=10)
     kidnum=Label(reservationwindow, text="명")
@@ -614,7 +607,6 @@ def memberresv():
     reservationwindow.mainloop()
 
 #로그인
-
 def memberLoginFunc():
     print(id)
     if id=='':
@@ -672,7 +664,6 @@ def guestinfo():
     register.grid(row=8, column=1, sticky=W+E+N+S)
 
 #비회원 예매하기 창
-
 def guestresv():
     reservationwindow=Tk()
     
@@ -781,8 +772,6 @@ def guestreceipt():
     receiptwindow.mainloop()
 
 searchButton=Button(frame4,text="비회원 조회하기",command=guestreceipt)
-if id=="":
-    guestreceipt
 
 #테이블
 columnname=["예약자명","예약일자","인원"]
