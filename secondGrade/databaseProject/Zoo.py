@@ -4,10 +4,10 @@ from PIL import ImageTk,Image
 import pymysql
 import requests
 from io import BytesIO
+from datetime import datetime
 
 id=""
 con = pymysql.connect(host='localhost', user='root', password='0000',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
-cur = con.cursor()
 url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'
 
 #로그인/로그아웃
@@ -53,8 +53,8 @@ def admin():
         gender.grid(row=4,column=0)
         gender=StringVar()
 
-        genderM=Radiobutton(addAnmWindow, text='남',variable=gender)
-        genderF=Radiobutton(addAnmWindow, text='여',variable=gender)
+        genderM=Radiobutton(addAnmWindow, text='남',variable=gender, value="M")
+        genderF=Radiobutton(addAnmWindow, text='여',variable=gender, value="F")
 
         genderM.grid(row=4, column=1,sticky='w',padx=50)
         genderF.grid(row=4, column=1,sticky='e',padx=50)
@@ -99,13 +99,13 @@ def admin():
         def animalRegisterFunc():
             birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
             selectBreedNoSQL = "select 동물번호 from 종류 where 종류 = '{}'".format(breedentry.get())
+            selectTamerNoSQL = "select 직원번호 from 직원 where 이름 = '{}'".format(tamerentry.get())
             cur = con.cursor()
             cur.execute(selectBreedNoSQL)
-            breed = cur.fetchone()            
-            selectTamerNoSQL = "select 직원번호 from 직원 where 이름 = '{}'".format(tamerentry.get())
+            breed = cur.fetchone()
             cur.execute(selectTamerNoSQL)
             tamer = cur.fetchone()
-            insertSqQL = "insert into 동물 values(0,'{}',{},'{}','{}','{}');".format(nameentry.get(), birth, breed[0], genderM.getboolean, tamer[0])
+            insertSqQL = "insert into 동물 values(0,'{}',{},'{}','{}','{}')".format(nameentry.get(), birth, breed[0], genderM.getboolean, tamer[0])
             cur.execute(insertSqQL)
             con.commit()
 
@@ -274,7 +274,7 @@ def admin():
     rsvtable.heading("#0", text="index")
 
     for i in rsvColumn:
-        rsvtable.column(i,width=100, anchor="center")
+        rsvtable.column(i,width=90, anchor="center")
         rsvtable.heading(i, text=i)
 
     rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
@@ -479,7 +479,7 @@ def mapA():
     mapAFrame = Frame(mapAWindow)
 
     cur = con.cursor()
-    sql = "select 이름 from 개체 where 구역번호 = 1"
+    sql = "select 이름 from 동물,종류 where 구역번호 = 1 and 동물.동물번호 = 종류.동물번호"
     cur.execute(sql)
     rows = cur.fetchall()
 
@@ -496,7 +496,7 @@ def mapB():
     mapBFrame = Frame(mapBWindow)
 
     cur = con.cursor()
-    sql = "select 이름 from 개체 where 구역번호 = 2"
+    sql = "select 이름 from 동물,종류 where 구역번호 = 2 and 동물.동물번호 = 종류.동물번호"
     cur.execute(sql)
     rows = cur.fetchall()
 
@@ -513,7 +513,7 @@ def mapC():
     mapCFrame = Frame(mapCWindow)
 
     cur = con.cursor()
-    sql = "select 이름 from 개체 where 구역번호 = 3"
+    sql = "select 이름 from 동물,종류 where 구역번호 = 3 and 동물.동물번호 = 종류.동물번호"
     cur.execute(sql)
     rows = cur.fetchall()
 
@@ -530,7 +530,7 @@ def mapD():
     mapDFrame = Frame(mapDWindow)
 
     cur = con.cursor()
-    sql = "select 이름 from 개체 where 구역번호 = 4"
+    sql = "select 이름 from 동물,종류 where 구역번호 = 4 and 동물.동물번호 = 종류.동물번호"
     cur.execute(sql)
     rows = cur.fetchall()
 
@@ -547,7 +547,7 @@ def mapE():
     mapEFrame = Frame(mapEWindow)
 
     cur = con.cursor()
-    sql = "select 이름 from 개체 where 구역번호 = 5"
+    sql = "select 이름 from 동물,종류 where 구역번호 = 5 and 동물.동물번호 = 종류.동물번호"
     cur.execute(sql)
     rows = cur.fetchall()
 
@@ -564,7 +564,7 @@ def mapF():
     mapFFrame = Frame(mapFWindow)
 
     cur = con.cursor()
-    sql = "select 이름 from 개체 where 구역번호 = 6"
+    sql = "select 이름 from 동물,종류 where 구역번호 = 6 and 동물.동물번호 = 종류.동물번호"
     cur.execute(sql)
     rows = cur.fetchall()
 
@@ -592,24 +592,39 @@ areaframe.rowconfigure(tuple(range(3)),weight=1)
 areaframe.columnconfigure(tuple(range(2)),weight=1)
 
 #동물 상세 정보
-def animalInfo(name):
+def animalInfo(_name):
     infoWindow = Tk()
     infoWindow.title("동물 정보")
 
-    res = requests.get(url.format(name))
+    #_name = name['text']
+    print(_name)
+
+    res = requests.get(url.format(_name))
     image = ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100)))
 
-    name=Label(photoframe,text=name)
-    img = Label(photoframe,image=image,bg=c[i%len(c)])
+    nameLabel=Label(infoWindow, text=_name)
+    img=Label(infoWindow, image=image)
     img.pack(side="left")
-    name.pack()
+    nameLabel.pack()
 
 #next버튼 prev버튼
 page = 0;
 def paging(b):
-    if b == 1 and 0<=page<=3:
+    if b == 1 and page<=3:
         cur = con.cursor()
-        sql="select 이름 from 개체"
+        sql="select 이름 from 동물"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        rows = rows[page*8:(page+1)*8]
+
+        pictures = anmPicFrame.grid_slaves()
+        for i in pictures:
+            res = requests.get(url.format(rows[i%len(rows)]))
+            image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+            i["image"] = image
+    elif b == 0 and page>=1:
+        cur = con.cursor()
+        sql="select 이름 from 동물"
         cur.execute(sql)
         rows = cur.fetchall()
         rows = rows[page*8:(page+1)*8]
@@ -637,37 +652,36 @@ for i in range(6):
 
 anmPicFrame=Frame(frame2, bg="yellow")
 anmPicFrame.pack()
-animalname=["lion","토끼","곰"]
-c = ['red','orange','yellow','green','blue','purple']
+animalname=[]#["사자","토끼","곰"]
+cur = con.cursor()
+sql="select 이름 from 동물 limit 8"
+cur.execute(sql)
+rows = cur.fetchall()
+
+#c = ['red','orange','yellow','green','blue','purple']
 image = []
-for i in range(8):
-    res = requests.get(url.format(animalname[i%len(animalname)]))
+
+for i in range(len(rows)):
+    res = requests.get(url.format(rows[i%len(rows)]))
     photoframe=Frame(anmPicFrame, bg="skyblue")
     image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
 
-    name=Label(photoframe,text=animalname[i%3])
-    img = Button(photoframe,image=image[i],bg=c[i%len(c)], command=lambda: animalInfo(name["text"]))
+    name=Label(photoframe,text=rows[i][0])
+    img =Button(photoframe,image=image[i], command=lambda:animalInfo(name["text"]))
     img.pack()
     name.pack()
     photoframe.grid(column=i%4, row=i//4)
+
 anmFrame=Frame(frame2, bg="blue")
 anmFrame.pack()
-prevButton = Button(anmFrame, text="<")
-nextButton = Button(anmFrame, text=">")
+
+prevButton = Button(anmFrame, text="<", command=lambda:paging(0))
+nextButton = Button(anmFrame, text=">", command=lambda:paging(1))
 prevButton.pack(side="left")
 nextButton.pack(side="right")
 
 #예매
 #회원/비회원 예매하기 선택, 날짜, 성인/아이, 도보/차량
-
-#결제
-def payment(info):
-    payWindow = Tk()
-    payWindow.title("결제")
-    
-    #가격 인원 할인
-
-    payWindow.mainloop()
 
 #로그인
 def memberLoginFunc():
@@ -675,7 +689,7 @@ def memberLoginFunc():
     if id=='':
         messagebox.showerror("에러","로그인 후 다시 시도하여 주세요")
     else:
-        resvation()   
+        resvation()
 
 #경우1) 회원 예매하기 선택 시
 #회원 예매하기 창
@@ -710,9 +724,8 @@ def resvation():
     visitM=Label(reservationwindow,text="방문 방법")
     visitM.grid(row=2,column=0)
     visit=StringVar()
-
-    visit1=Radiobutton(reservationwindow, text='도보',variable=visit)
-    visit2=Radiobutton(reservationwindow, text='차량',variable=visit)
+    visit1=Radiobutton(reservationwindow, text='도보',variable=visit, value="walk")
+    visit2=Radiobutton(reservationwindow, text='차량',variable=visit, value="car")
 
     visit1.grid(row=2, column=2,sticky='w',padx=40)
     visit2.grid(row=2, column=2,sticky='e',padx=40)
@@ -722,6 +735,7 @@ def resvation():
 
     adult=Label(reservationwindow, text="성인")
     adultEntry=Entry(reservationwindow, width=10)
+    adultEntry.insert(0,"0")
     adultnum=Label(reservationwindow, text="명")
 
     adult.grid(row=4,column=1,padx=10,sticky='e')
@@ -730,11 +744,62 @@ def resvation():
 
     kid=Label(reservationwindow, text="아이")
     kidEntry=Entry(reservationwindow,width=10)
+    kidEntry.insert(0,"0")
     kidnum=Label(reservationwindow, text="명")
 
     kid.grid(row=5,column=1,padx=10,sticky='e')
     kidEntry.grid(row=5, column=2,padx=10)
     kidnum.grid(row=5, column=3,padx=10)
+
+    #결제
+    def payment():
+        payWindow = Tk()
+        payWindow.title("결제")
+
+        adultPrice = Label(payWindow, text="성인: 30,000")
+        kidPrice = Label(payWindow, text="아이: 25,000")
+        adultPrice.pack()
+        kidPrice.pack()
+
+        paytToolFrame = Frame(payWindow)
+        paytTool=Label(paytToolFrame,text="결제 수단")
+        paytTool.pack(side="left")
+        tool=StringVar()
+        tool1=Radiobutton(paytToolFrame, text='카드',variable=tool, value=3)
+        tool2=Radiobutton(paytToolFrame, text='모바일',variable=tool, value=2)
+        tool3=Radiobutton(paytToolFrame, text='무통장',variable=tool, value=1)
+        tool1.pack(side="left")
+        tool2.pack(side="left")
+        tool3.pack(side="left")
+        paytToolFrame.pack()
+
+        #가격 인원 할인
+        adultno = int(adultEntry.get())
+        childno = int(kidEntry.get())
+        totalPrice = adultno*30000+childno*25000
+
+        if id!="":
+            cur=con.cursor()
+            cur.execute("select 할인율 from 멤버십, 회원 where 아이디 = '{}' and 회원.등급번호=멤버십.등급번호".format(id))
+            discount = cur.fetchone()
+            totalPrice = totalPrice*(1-discount)
+
+        price = Label(payWindow, text="가격:{}".format(totalPrice))
+        price.pack()
+
+        def pay():
+            birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
+            cur=con.cursor()
+            cur.execute("insert into 입장객 values(0,'{}',{},'{}','{}',{},{},{})".format(id, tool.get(), datetime.now().date(), birth, adultEntry.get(), kidEntry.get(), totalPrice))
+            con.commit()
+            messagebox.showinfo("결제 완료","결제가 완료되었습니다.")
+            payWindow.destroy()
+            reservationwindow.destroy()
+
+        payButton = Button(payWindow, text="결제", command=pay)
+        payButton.pack(side="bottom")
+
+        payWindow.mainloop()
 
     resv=Button(reservationwindow, text="확인", command=payment)
     resv.grid(row=8, column=1, sticky=W+E+N+S, columnspan=2)
@@ -787,20 +852,24 @@ def guestinfo():
 
     register=Button(guestinfoWindow, text="확인", command=resvation)
     register.grid(row=8, column=1, sticky=W+E+N+S)
- 
+
 guestButton=Button(frame3,text="비회원\n예매하기",command=guestinfo,bg="white")
 
 memberButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
 guestButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
 
-#예매 내역 확인 버튼
-def receipt(name, birth, number):
-    globals.name = name
-    globals.birth = birth
-    globals.number = number
 
 #예매 내역
 def guestreceipt():
+    if id != "":
+        sql = "select 이름, 입장시기, 동행인_성인, 동행인_아이, 가격 from 회원, 입장객 where 아이디 = 회원번호 and 아이디 = '"+id+"'"
+        cur = con.cursor()
+        cur.execute(sql)
+        rows = cur.fetchall()
+        for i in rows:
+            table.insert("","end",text=0, values=[i[0], i[1], i[2]+i[3], i[4]])
+        return 0;
+    
     receiptwindow=Tk()
 
     #이름, 생일, 번호
@@ -811,36 +880,68 @@ def guestreceipt():
     nameentry=Entry(receiptwindow)
     nameentry.grid(row=0, column=1)
 
-    guestbirth=Label(receiptwindow,text="생일")
-    guestbirth.grid(row=1,column=0)
+    birth=Label(receiptwindow,text="생년월일")
+    birth.grid(row=1, column=0)
 
-    birthentry=Entry(receiptwindow)
-    birthentry.grid(row=1, column=1)
+    birthframe=Frame(receiptwindow)
+    birthframe.grid(row=1, column=1)
 
-    guestnumber=Label(receiptwindow,text="번호")
+    yearBox=ttk.Combobox(birthframe,height=0, width=4, values=[i for i in range(1950,2023)])
+    yearBox.grid(row=0, column=0)
+
+    year=Label(birthframe,text="년")
+    year.grid(row=0, column=1)
+
+    monthBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,13)])
+    monthBox.grid(row=0, column=2)
+
+    month=Label(birthframe,text="월")
+    month.grid(row=0, column=3)
+
+    dayBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,32)])
+    dayBox.grid(row=0, column=4)
+
+    day=Label(birthframe,text="일")
+    day.grid(row=0, column=5)
+
+    guestnumber=Label(receiptwindow,text="전화번호")
     guestnumber.grid(row=2, column=0)
 
     numberentry=Entry(receiptwindow)
     numberentry.grid(row=2, column=1)
+
+    #예매 내역 확인 버튼
+    def receipt():
+        name = nameentry.get()
+        birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
+        number = numberentry.get()
+        
+        sql = "select 이름, 입장시기, 동행인_성인, 동행인_아이, 가격 from 회원, 입장객 where 아이디 = 회원번호 and 이름 = '{}' and 생년월일 = '{}' and 휴대폰번호 = '{}'"
+        cur = con.cursor()
+        cur.execute(sql.format(name, birth, number))
+        rows = cur.fetchall()
+        for i in rows:
+            table.insert("","end",text=0, values=[i[0], i[1], i[2]+i[3], i[4]])
   
-    searchreceipt=Button(receiptwindow, text="확인")
+    searchreceipt=Button(receiptwindow, text="확인", command=receipt)
     searchreceipt.grid(row=3, column=1, sticky=W+E+N+S)
 
     receiptwindow.mainloop()
 
-searchButton=Button(frame4,text="비회원 조회하기",command=guestreceipt)
+searchButton=Button(frame4, text="조회하기", command=guestreceipt)
 
 #테이블
-columnname=["예약자명","예약일자","인원"]
+columnname=["예약자명","예약일자","인원","가격"]
 table=ttk.Treeview(frame4, columns=columnname)
 
-table.column("#0",width=10, anchor="center")
+table.column("#0", width=15, anchor="center")
 table.heading("#0", text="index")
+
 for i in columnname:
-    table.column(i,width=100, anchor="center")
+    table.column(i, width=90, anchor="center")
     table.heading(i, text=i)
 
-table.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
+#table.insert("", "end", text=0, values=["김선재","2022.11.17","3명", "9천억"])
 
 table.pack()
 searchButton.pack()
