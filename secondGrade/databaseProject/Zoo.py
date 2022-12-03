@@ -35,6 +35,7 @@ def admin():
 
     #동물관리
     #동물(개체/종류)추가
+   
     def addAnm():
         addAnmWindow=Tk()
         addAnmWindow.title("동물 개체 등록")
@@ -874,15 +875,9 @@ table=ttk.Treeview(frame4, columns=columnname)
 
 table.column("#0",width=10, anchor="center")
 table.heading("#0", text="index")
-
-table.column("예약자명",width=100, anchor="center")
-table.heading("예약자명", text="예약자명")
-
-table.column("예약일자",width=100, anchor="center")
-table.heading("예약일자", text="예약일자")
-
-table.column("인원",width=100, anchor="center")
-table.heading("인원", text="인원")
+for i in columnname:
+    table.column(i,width=100, anchor="center")
+    table.heading(i, text=i)
 
 table.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
 
