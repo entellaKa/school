@@ -425,6 +425,8 @@ def Login():
             id=IDentry.get()
             loginWindow.destroy()
             loginButton["text"]="로그아웃"
+        else: 
+            messagebox.showerror("에러","아이디/비밀번호를 다시 확인하여 주세요")
 
     Login=Button(loginWindow, text="로그인",command=loginF)
     Login.grid(row=0, column=2, rowspan=2,sticky=W+E+N+S)
@@ -658,34 +660,52 @@ nextButton.pack(side="right")
 #예매
 #회원/비회원 예매하기 선택, 날짜, 성인/아이, 도보/차량
 
+#결제
+def payment(info):
+    payWindow = Tk()
+    payWindow.title("결제")
+    
+    #가격 인원 할인
+
+    payWindow.mainloop()
+
+#로그인
+def memberLoginFunc():
+    print(id)
+    if id=='':
+        messagebox.showerror("에러","로그인 후 다시 시도하여 주세요")
+    else:
+        resvation()   
+
 #경우1) 회원 예매하기 선택 시
 #회원 예매하기 창
-def memberresv():
+def resvation():
     reservationwindow=Tk()
+    reservationwindow.title("예매 정보 입력하기")
     
-    rsvDate=Label(reservationwindow,text="입장시기")
+    rsvDate=Label(reservationwindow,text="입장 시기")
     rsvDate.grid(row=0, column=0)
 
     rsvDateframe=Frame(reservationwindow)
-    rsvDateframe.grid(row=1, column=2)
+    rsvDateframe.grid(row=0, column=2)
 
     yearBox=ttk.Combobox(rsvDateframe,height=0, width=4, values=[2022,2023])
-    yearBox.grid(row=0, column=0)
+    yearBox.grid(row=0, column=3)
 
     year=Label(rsvDateframe,text="년")
-    year.grid(row=0, column=1)
+    year.grid(row=0, column=4)
 
     monthBox=ttk.Combobox(rsvDateframe, height=0, width=4, values=[i for i in range(1,13)])
-    monthBox.grid(row=0, column=2)
+    monthBox.grid(row=0, column=5)
 
     month=Label(rsvDateframe,text="월")
-    month.grid(row=0, column=3)
+    month.grid(row=0, column=6)
 
     dayBox=ttk.Combobox(rsvDateframe, height=0, width=4, values=[i for i in range(1,32)])
-    dayBox.grid(row=0, column=4)
+    dayBox.grid(row=0, column=7)
 
     day=Label(rsvDateframe,text="일")
-    day.grid(row=0, column=5)
+    day.grid(row=0, column=8)
 
     visitM=Label(reservationwindow,text="방문 방법")
     visitM.grid(row=2,column=0)
@@ -694,8 +714,8 @@ def memberresv():
     visit1=Radiobutton(reservationwindow, text='도보',variable=visit)
     visit2=Radiobutton(reservationwindow, text='차량',variable=visit)
 
-    visit1.grid(row=2, column=2,sticky='w')
-    visit2.grid(row=2, column=1,sticky='e')
+    visit1.grid(row=2, column=2,sticky='w',padx=40)
+    visit2.grid(row=2, column=2,sticky='e',padx=40)
 
     guestnum=Label(reservationwindow,text='방문 인원')
     guestnum.grid(row=4, column=0)
@@ -716,20 +736,10 @@ def memberresv():
     kidEntry.grid(row=5, column=2,padx=10)
     kidnum.grid(row=5, column=3,padx=10)
 
-    resv=Button(reservationwindow, text="확인", command=memberresv)
-    resv.grid(row=8, column=1, sticky=W+E+N+S)
+    resv=Button(reservationwindow, text="확인", command=payment)
+    resv.grid(row=8, column=1, sticky=W+E+N+S, columnspan=2)
 
     reservationwindow.mainloop()
-
-#로그인
-def memberLoginFunc():
-    print(id)
-    if id=='':
-        Login()
-        if id!="":
-            memberresv()
-    else:
-        memberresv()
 
 memberButton=Button(frame3,text="회원\n예매하기",command=memberLoginFunc ,bg="white")
 
@@ -775,77 +785,9 @@ def guestinfo():
     phoneentry=Entry(guestinfoWindow)
     phoneentry.grid(row=6, column=1)
 
-    register=Button(guestinfoWindow, text="확인", command=guestresv)
+    register=Button(guestinfoWindow, text="확인", command=resvation)
     register.grid(row=8, column=1, sticky=W+E+N+S)
-
-#비회원 예매하기 창
-def guestresv():
-    reservationwindow=Tk()
-    
-    rsvDate=Label(reservationwindow,text="입장 시기")
-    rsvDate.grid(row=0, column=0)
-
-    rsvDateframe=Frame(reservationwindow)
-    rsvDateframe.grid(row=0, column=2)
-
-    yearBox=ttk.Combobox(rsvDateframe,height=0, width=4, values=[2022,2023])
-    yearBox.grid(row=0, column=3)
-
-    year=Label(rsvDateframe,text="년")
-    year.grid(row=0, column=4)
-
-    monthBox=ttk.Combobox(rsvDateframe, height=0, width=4, values=[i for i in range(1,13)])
-    monthBox.grid(row=0, column=5)
-
-    month=Label(rsvDateframe,text="월")
-    month.grid(row=0, column=6)
-
-    dayBox=ttk.Combobox(rsvDateframe, height=0, width=4, values=[i for i in range(1,32)])
-    dayBox.grid(row=0, column=7)
-
-    day=Label(rsvDateframe,text="일")
-    day.grid(row=0, column=8)
-
-    #############################################################
-    '''
-    라디오버튼 - 도보/차량 고르기
-    
-
-    성인+아이 인원 각각 입력받는 위젯
-    '''
-    visitM=Label(reservationwindow,text="방문 방법")
-    visitM.grid(row=2,column=0)
-    visit=StringVar()
-
-    visit1=Radiobutton(reservationwindow, text='도보',variable=visit)
-    visit2=Radiobutton(reservationwindow, text='차량',variable=visit)
-
-    visit1.grid(row=2, column=2,sticky='w',padx=40)
-    visit2.grid(row=2, column=2,sticky='e',padx=40)
-
-    guestnum=Label(reservationwindow,text='방문 인원')
-    guestnum.grid(row=4, column=0)
-
-    adult=Label(reservationwindow, text="성인")
-    adultEntry=Entry(reservationwindow, width=10)
-    adultnum=Label(reservationwindow, text="명")
-
-    adult.grid(row=4,column=1,padx=10,sticky='e')
-    adultEntry.grid(row=4, column=2,padx=10)
-    adultnum.grid(row=4, column=3,padx=10)
-
-    kid=Label(reservationwindow, text="아이")
-    kidEntry=Entry(reservationwindow,width=10)
-    kidnum=Label(reservationwindow, text="명")
-
-    kid.grid(row=5,column=1,padx=10,sticky='e')
-    kidEntry.grid(row=5, column=2,padx=10)
-    kidnum.grid(row=5, column=3,padx=10)
-
-    resv=Button(reservationwindow, text="확인", command=guestresv)
-    resv.grid(row=8, column=1, sticky=W+E+N+S, columnspan=2)
-
-    reservationwindow.mainloop()
+ 
 guestButton=Button(frame3,text="비회원\n예매하기",command=guestinfo,bg="white")
 
 memberButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
