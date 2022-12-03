@@ -6,7 +6,8 @@ import requests
 from io import BytesIO
 
 id=""
-con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
+con = pymysql.connect(host='localhost', user='root', password='0000',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
+cur = con.cursor()
 url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'
 
 #로그인/로그아웃
@@ -23,6 +24,7 @@ def Logout():
 def admin():
     adminWindow=Tk()
     adminWindow.title("관리자 모드")
+    adminWindow.geometry("700x400")
 
     menu=ttk.Notebook(adminWindow, width=300, height=300)
         
@@ -242,9 +244,25 @@ def admin():
     #주차관리
 
     #고객관리
+    #회원 정보(아이디, 비밀번호, 이름, 생년월일, 휴대전화번호)
+    userColumn = ['아이디',' 비밀번호',' 이름',' 생년월일',' 핸드폰번호','포인트','등급']
+    userTable = ttk.Treeview(frame4, columns=userColumn)
+    userTable.column("#0",width=10, anchor="center")
+    userTable.heading("#0", text="번호")
 
+    for i in userColumn:
+        userTable.column(i, width=90, anchor="center")
+        userTable.heading(i, text=i)
+    
+    sql = "select 아이디, 패스워드, 이름, 생년월일, 핸드폰번호, 포인트, 등급.등급 from 회원 inner join 등급 on 회원.등급번호 = 등급.등급번호"
+    cur = con.cursor()
+    cur.execute(sql)
+    users = cur.fetchall()
 
-
+    for user in users:
+        userTable.insert("","end", user[0], text=0, values=user)
+    
+    userTable.pack()
 
     #예매관리
 
@@ -259,7 +277,6 @@ def admin():
         rsvtable.column(i,width=100, anchor="center")
         rsvtable.heading(i, text=i)
 
-
     rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
 
     rsvtable.pack()
@@ -267,6 +284,7 @@ def admin():
 
 
     #보고서
+    
 
 
     menu.add(frame1,text="동물 관리")
@@ -276,7 +294,7 @@ def admin():
     menu.add(frame5,text="예매 관리")
     menu.add(frame6,text="보고서")
 
-    menu.pack()
+    menu.pack(fill="both")
 
     adminWindow.mainloop()
 
@@ -621,6 +639,7 @@ animalname=["lion","토끼","곰"]
 c = ['red','orange','yellow','green','blue','purple']
 image = []
 for i in range(8):
+    res = requests.get(url.format(animalname[i%len(animalname)]))
     photoframe=Frame(anmPicFrame, bg="skyblue")
     image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
 
