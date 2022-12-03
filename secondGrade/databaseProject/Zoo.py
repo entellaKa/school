@@ -6,6 +6,8 @@ import requests
 from io import BytesIO
 
 id=""
+con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
+url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'
 
 #로그인/로그아웃
 def Logout():
@@ -92,7 +94,7 @@ def admin():
 
         #이름 생일 번호 성별 사육사
         def animalRegisterFunc():
-            birth = "{}-{}-{}".format(year.getint(), month.getint(), day.getint())
+            birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
             selectBreedNoSQL = "select 동물번호 from 종류 where 종류 = '{}'".format(breedentry.get())
             cur = con.cursor()
             cur.execute(selectBreedNoSQL)
@@ -132,11 +134,11 @@ def admin():
 
         #품종 먹이 구역
         def breedRegisterFunc():
-            selectBreedNoSQL = "select 구역번호 from 구역 where 구역이름 = '{}'".format(zone.get())
+            selectBreedNoSQL = "select 구역번호 from 구역 where 구역이름 = '{}'".format(zoneEntry.get())
             cur = con.cursor()
             cur.execute(selectBreedNoSQL)
             area = cur.fetchone()
-            insertSqQL = "insert into 종류 values(0,'{}',{},'{}','{}','{}');".format(breedEntry.get(), foodEntry.get(), area[0])
+            insertSqQL = "insert into 종류 values(0,'{}',{},'{}');".format(breedEntry.get(), foodEntry.get(), area[0])
             cur.execute(insertSqQL)
             con.commit()
 
@@ -414,7 +416,6 @@ def Login():
     loginWindow.mainloop()
 
 #홈 화면
-con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
 
 window=Tk()
 window.title("Tukorea Zoo")
@@ -462,8 +463,7 @@ def mapA():
     rows = cur.fetchall()
 
     for i in rows:
-        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
-        res = requests.get(url)
+        res = requests.get(url.format(i))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapAFrame, image=image[i])
         pic.pack()
@@ -480,8 +480,7 @@ def mapB():
     rows = cur.fetchall()
 
     for i in rows:
-        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
-        res = requests.get(url)
+        res = requests.get(url.format(i))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapBFrame, image=image[i])
         pic.pack()
@@ -498,8 +497,7 @@ def mapC():
     rows = cur.fetchall()
 
     for i in rows:
-        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
-        res = requests.get(url)
+        res = requests.get(url.format(i))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapCFrame, image=image[i])
         pic.pack()
@@ -516,8 +514,7 @@ def mapD():
     rows = cur.fetchall()
 
     for i in rows:
-        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
-        res = requests.get(url)
+        res = requests.get(url.format(i))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapDFrame, image=image[i])
         pic.pack()
@@ -534,8 +531,7 @@ def mapE():
     rows = cur.fetchall()
 
     for i in rows:
-        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
-        res = requests.get(url)
+        res = requests.get(url.format(i))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapEFrame, image=image[i])
         pic.pack()
@@ -552,8 +548,7 @@ def mapF():
     rows = cur.fetchall()
 
     for i in rows:
-        url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(i)
-        res = requests.get(url)
+        res = requests.get(url.format(i))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapFFrame, image=image[i])
         pic.pack()
@@ -580,8 +575,7 @@ def animalInfo(name):
     infoWindow = Tk()
     infoWindow.title("동물 정보")
 
-    url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(name)
-    res = requests.get(url)
+    res = requests.get(url.format(name))
     image = ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100)))
 
     name=Label(photoframe,text=name)
@@ -601,9 +595,9 @@ def paging(b):
 
         pictures = anmPicFrame.grid_slaves()
         for i in pictures:
-            i["image"] = url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(rows[i%len(rows)])
-            res = requests.get(url)
+            res = requests.get(url.format(rows[i%len(rows)]))
             image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+            i["image"] = image
 
 #동물정보
 loginframe.pack(fill="x")
@@ -627,8 +621,6 @@ c = ['red','orange','yellow','green','blue','purple']
 image = []
 for i in range(8):
     photoframe=Frame(anmPicFrame, bg="skyblue")
-    url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(animalname[i%len(animalname)])
-    res = requests.get(url)
     image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
 
     name=Label(photoframe,text=animalname[i%3])
