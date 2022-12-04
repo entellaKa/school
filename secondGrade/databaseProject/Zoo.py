@@ -398,7 +398,7 @@ def Login():
 #홈 화면
 
 
-con = pymysql.connect(host='localhost', user='root', password='1234',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
+con = pymysql.connect(host='localhost', user='root', password='0000',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
 
 window=Tk()
 window.title("Tukorea Zoo")
