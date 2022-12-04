@@ -27,17 +27,16 @@ def admin():
     adminWindow.geometry("700x400")
 
     menu=ttk.Notebook(adminWindow, width=300, height=300)
-        
+
     frame1=Frame(adminWindow)
     frame2=Frame(adminWindow)
-    frame3=Frame(adminWindow)
     frame4=Frame(adminWindow)
-    frame5=Frame(adminWindow)
+    frame5=Frame(adminWindow, padx=20)
     frame6=Frame(adminWindow)
 
     #동물관리
     #동물(개체/종류)추가
-   
+
     def addAnm():
         addAnmWindow=Tk()
         addAnmWindow.title("동물 개체 등록")
@@ -108,6 +107,8 @@ def admin():
             insertSqQL = "insert into 동물 values(0,'{}',{},'{}','{}','{}')".format(nameentry.get(), birth, breed[0], genderM.getboolean, tamer[0])
             cur.execute(insertSqQL)
             con.commit()
+            messagebox.showinfo("동물등록", "새로운 동물이 추가되었습니다")
+
 
         register=Button(addAnmWindow, text="등록하기", command=animalRegisterFunc)
         register.grid(row=11, column=1, sticky=W+E+N+S)
@@ -141,9 +142,12 @@ def admin():
             cur = con.cursor()
             cur.execute(selectBreedNoSQL)
             area = cur.fetchone()
-            insertSqQL = "insert into 종류 values(0,'{}',{},'{}');".format(breedEntry.get(), foodEntry.get(), area[0])
+            print(breedEntry.get(), foodEntry.get(), area[0])
+            insertSqQL = "insert into 종류 values(0,'{}','{}',{});".format(breedEntry.get(), foodEntry.get(), area[0])
             cur.execute(insertSqQL)
             con.commit()
+            messagebox.showinfo("동물등록", "새로운 종류가 추가되었습니다")
+
 
         register=Button(addBreedWindow, text="추가하기", command=breedRegisterFunc)
         register.grid(row=8, column=1, sticky=W+E+N+S)
@@ -198,11 +202,11 @@ def admin():
         phoneentry=Entry(addStaffWindow)
         phoneentry.grid(row=6, column=1)
 
-        zoneM=Label(addStaffWindow,text="담당구역")
-        zoneM.grid(row=8, column=0)
+        address=Label(addStaffWindow,text="주소")
+        address.grid(row=8, column=0)
 
-        zoneM=Entry(addStaffWindow)
-        zoneM.grid(row=8, column=1)
+        address=Entry(addStaffWindow)
+        address.grid(row=8, column=1)
 
         account=Label(addStaffWindow,text="계좌번호")
         account.grid(row=10, column=0)
@@ -210,8 +214,15 @@ def admin():
         account=Entry(addStaffWindow)
         account.grid(row=10, column=1)
 
+        def registeration():
+            birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
+            cur = con.cursor()
+            insertSqQL = "insert into 직원 values(0,'{}','{}','{}','{}','{}','{}');".format(nameentry.get(),birth,phoneentry.get(), address.get(), account.get(),datetime.now().date())
+            cur.execute(insertSqQL)
+            con.commit()
+            messagebox.showinfo("직원등록", "직원이 등록되었습니다")
 
-        register=Button(addStaffWindow, text="등록하기")
+        register=Button(addStaffWindow, text="등록하기", command=registeration)
         register.grid(row=12, column=1, sticky=W+E+N+S)
 
     #직원 검색/삭제
@@ -225,14 +236,47 @@ def admin():
         searchSEntry=Entry(searchStaffWindow)
         searchSEntry.grid(row=2, column=1)
 
-        searchButton=Button(searchStaffWindow,text="검색")
+        def search():
+            cur = con.cursor()
+            sql = "select 이름, 생년월일, 핸드폰번호, 주소 , 계좌번호, 입사일 from 직원 where = '{}'".format(searchSEntry.get())
+            cur = con.cursor()
+            cur.execute(sql)
+            staff = cur.fetchall()
+            for i in staff:
+                staffTable.insert("","end", i[0], text=0, values=i)
+
+        def delete():
+            value = staffTable.item(staffTable.focus())
+            print(value["values"])
+            cur = con.cursor()
+            insertSqQL = "delete from 직원 where 이름 = '{}'".format(value["values"][0])
+            cur.execute(insertSqQL)
+            con.commit()
+            messagebox.showinfo("직원등록", "삭제되었습니다")
+
+        searchButton=Button(searchStaffWindow,text="검색", command=search)
         searchButton.grid(row=2, column=2)
 
-        register=Button(searchStaffWindow, text="삭제하기")
+        register=Button(searchStaffWindow, text="삭제하기", command=delete)
         register.grid(row=8, column=1, sticky=W+E+N+S)
+
+        staffColumn = ["이름", "생년월일","핸드폰번호", "주소","계좌번호","입사일"]
+        staffTable = ttk.Treeview(searchStaffWindow, columns=staffColumn)
+        staffTable.column("#0",width=0, anchor="center")
+        for i in staffColumn:
+            staffTable.column(i, width=90, anchor="center")
+            staffTable.heading(i, text=i)
+
+        sql = "select 이름, 생년월일, 핸드폰번호, 주소 , 계좌번호, 입사일 from 직원"
+        cur = con.cursor()
+        cur.execute(sql)
+        staff = cur.fetchall()
+        for i in staff:
+            staffTable.insert("","end", i[0], text=0, values=i)
+        staffTable.grid(row=3,column=0, columnspan=3)
     
     addStaffButton=Button(frame2,text="새로운 직원\n등록하기",command=manageStaff ,bg="white")
-    manageStaffButton=Button(frame2,text="직원 관리",command=searchStaff ,bg="white")
+    manageStaffButton=Button(frame2,text="직원 관리/보고서",command=searchStaff ,bg="white")
 
     addStaffButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
     manageStaffButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
@@ -241,13 +285,11 @@ def admin():
     addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
     addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
 
-    #주차관리
-
     #고객관리
     #회원 정보(아이디, 비밀번호, 이름, 생년월일, 휴대전화번호)
     userColumn = ['아이디',' 비밀번호',' 이름',' 생년월일',' 핸드폰번호','포인트','등급']
     userTable = ttk.Treeview(frame4, columns=userColumn)
-    userTable.column("#0",width=10, anchor="center")
+    userTable.column("#0",width=0, anchor="center")
     userTable.heading("#0", text="번호")
 
     for i in userColumn:
@@ -270,7 +312,7 @@ def admin():
     rsvColumn =["예약자명","예약일자","인원"]
     rsvtable=ttk.Treeview(frame5, columns=rsvColumn)
 
-    rsvtable.column("#0",width=10, anchor="center")
+    rsvtable.column("#0",width=0, anchor="center")
     rsvtable.heading("#0", text="index")
 
     for i in rsvColumn:
@@ -279,20 +321,39 @@ def admin():
 
     rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
 
-    rsvtable.pack()
-
-
-
-    #보고서
+    rsvtable.pack(fill="both")
     
+    sql = "select 이름, 입장시기, 동행인_성인, 동행인_아이, 가격 from 회원, 입장객 where 아이디 = 회원번호"
+    cur = con.cursor()
+    cur.execute(sql)
+    rows = cur.fetchall()
+    for i in rows:
+        table.insert("","end",text=0, values=[i[0], i[1], i[2]+i[3], i[4]])
 
+    #동물보고서
+    animalColumn = ["이름","생일","종류","성별","사육사","먹이","구역"]
+    animalTable = ttk.Treeview(frame6, columns=animalColumn)
+    
+    for i in animalColumn:
+        animalTable.column(i, width=90, anchor="center")
+        animalTable.heading(i, text=i)
+
+    sql = "select 동물.이름, 동물.생일, 종류.종류, 동물.성별, 직원.이름, 종류.먹이, 구역.구역이름 from 동물, 직원, 종류, 구역 where 동물.동물번호 = 종류.동물번호 and 동물.담당사육사 = 직원.직원번호 and 종류.구역번호 = 구역.구역번호"
+    cur = con.cursor()
+    cur.execute(sql)
+    rows = cur.fetchall()
+
+    animalTable.column("#0", width=0)
+    for i in rows:
+        animalTable.insert("","end", id=i[0], values=i)
+
+    animalTable.pack()
 
     menu.add(frame1,text="동물 관리")
     menu.add(frame2,text="직원 관리")
-    menu.add(frame3,text="주차 관리")
-    menu.add(frame4,text="고객 관리")
-    menu.add(frame5,text="예매 관리")
-    menu.add(frame6,text="보고서")
+    menu.add(frame6,text="동물 보고서")
+    menu.add(frame4,text="고객 보고서")
+    menu.add(frame5,text="예매 보고서")
 
     menu.pack(fill="both")
 
@@ -302,7 +363,7 @@ def admin():
 def sign():
     idCheck = False
     signWindow = Tk()
-    signWindow.geometry("320x178-150+150")
+    signWindow.geometry("320x178-50+50")
     
     ID=Label(signWindow,text="ID")
     ID.grid(row=0, column=0)
@@ -400,6 +461,8 @@ def sign():
 #로그인 창
 def Login():
     loginWindow = Tk()
+    loginWindow.title("로그인")
+    loginWindow.geometry("215x64+50+50")
     
     memberID=Label(loginWindow,text="ID")
     memberID.grid(row=0, column=0)
@@ -415,6 +478,8 @@ def Login():
 
 
     def loginF():
+        print(loginWindow.winfo_width(),loginWindow.winfo_height())
+
         sql="select * from 회원 where 아이디='{}' && 패스워드='{}'".format(IDentry.get(),PWentry.get())
         cur=con.cursor()
         cur.execute(sql)
@@ -433,14 +498,15 @@ def Login():
 
     signup=Button(loginWindow, text="회원가입", borderwidth=0, command=sign)
     signup.grid(row=2, column=1, sticky="e")
-
+    
     loginWindow.mainloop()
+
 
 #홈 화면
 
 window=Tk()
 window.title("Tukorea Zoo")
-window.geometry("500x400+100+100")
+window.geometry("500x400+300+200")
 
 titleframe=Frame(window)
 
@@ -685,7 +751,6 @@ nextButton.pack(side="right")
 
 #로그인
 def memberLoginFunc():
-    print(id)
     if id=='':
         messagebox.showerror("에러","로그인 후 다시 시도하여 주세요")
     else:
@@ -726,6 +791,7 @@ def resvation():
     visit=StringVar()
     visit1=Radiobutton(reservationwindow, text='도보',variable=visit, value="walk")
     visit2=Radiobutton(reservationwindow, text='차량',variable=visit, value="car")
+    visit1.select()
 
     visit1.grid(row=2, column=2,sticky='w',padx=40)
     visit2.grid(row=2, column=2,sticky='e',padx=40)
@@ -756,18 +822,19 @@ def resvation():
         payWindow = Tk()
         payWindow.title("결제")
 
-        adultPrice = Label(payWindow, text="성인: 30,000")
-        kidPrice = Label(payWindow, text="아이: 25,000")
+        adultPrice = Label(payWindow, text="성인: 30,000원(인당)")
+        kidPrice = Label(payWindow, text="아이: 25,000원(인당)")
         adultPrice.pack()
         kidPrice.pack()
 
         paytToolFrame = Frame(payWindow)
         paytTool=Label(paytToolFrame,text="결제 수단")
         paytTool.pack(side="left")
-        tool=StringVar()
+        tool=IntVar()
         tool1=Radiobutton(paytToolFrame, text='카드',variable=tool, value=3)
         tool2=Radiobutton(paytToolFrame, text='모바일',variable=tool, value=2)
         tool3=Radiobutton(paytToolFrame, text='무통장',variable=tool, value=1)
+        tool1.select()
         tool1.pack(side="left")
         tool2.pack(side="left")
         tool3.pack(side="left")
@@ -780,17 +847,19 @@ def resvation():
 
         if id!="":
             cur=con.cursor()
-            cur.execute("select 할인율 from 멤버십, 회원 where 아이디 = '{}' and 회원.등급번호=멤버십.등급번호".format(id))
+            cur.execute("select 할인율 from 등급, 회원 where 아이디 = '{}' and 회원.등급번호=등급.등급번호".format(id))
             discount = cur.fetchone()
-            totalPrice = totalPrice*(1-discount)
+            totalPrice = int(totalPrice*(1-discount[0]))
 
         price = Label(payWindow, text="가격:{}".format(totalPrice))
         price.pack()
 
         def pay():
             birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
+            sql = "insert into 입장객 values(0,'{}',{},'{}','{}',{},{},{})".format(id, tool.get(), datetime.now().date(), birth, adultEntry.get(), kidEntry.get(), totalPrice)
+            print(sql)
             cur=con.cursor()
-            cur.execute("insert into 입장객 values(0,'{}',{},'{}','{}',{},{},{})".format(id, tool.get(), datetime.now().date(), birth, adultEntry.get(), kidEntry.get(), totalPrice))
+            cur.execute(sql)
             con.commit()
             messagebox.showinfo("결제 완료","결제가 완료되었습니다.")
             payWindow.destroy()
@@ -934,7 +1003,7 @@ searchButton=Button(frame4, text="조회하기", command=guestreceipt)
 columnname=["예약자명","예약일자","인원","가격"]
 table=ttk.Treeview(frame4, columns=columnname)
 
-table.column("#0", width=15, anchor="center")
+table.column("#0", width=0, anchor="center")
 table.heading("#0", text="index")
 
 for i in columnname:
