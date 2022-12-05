@@ -1,28 +1,247 @@
 from tkinter import *
-from tkinter import ttk, messagebox
-from tkinter import font
+from tkinter import ttk, messagebox, font
 from PIL import ImageTk,Image
 import pymysql
+import requests
+from io import BytesIO
 
 id=""
-pw=""
 
-
+#로그인/로그아웃
+def Logout():
+    global id
+    if id == "":
+        Login()
+    else:
+        loginButton['text']="로그인"
+        id = ""
 
 #관리자 모드
 
 def admin():
     adminWindow=Tk()
+    adminWindow.title("관리자 모드")
+
+    menu=ttk.Notebook(adminWindow, width=300, height=300)
         
     frame1=Frame(adminWindow)
     frame2=Frame(adminWindow)
     frame3=Frame(adminWindow)
     frame4=Frame(adminWindow)
     frame5=Frame(adminWindow)
-
     frame6=Frame(adminWindow)
 
-    menu=ttk.Notebook(adminWindow, width=300, height=300)
+    #동물관리
+    #동물(개체/종류)추가
+   
+    def addAnm():
+        addAnmWindow=Tk()
+        addAnmWindow.title("동물 개체 등록")
+
+        #동물 개체 추가
+        name=Label(addAnmWindow,text="이름")
+        name.grid(row=2, column=0)
+
+        nameentry=Entry(addAnmWindow)
+        nameentry.grid(row=2, column=1)
+
+        gender=Label(addAnmWindow,text="성별")
+        gender.grid(row=4,column=0)
+        gender=StringVar()
+
+        genderM=Radiobutton(addAnmWindow, text='남',variable=gender)
+        genderF=Radiobutton(addAnmWindow, text='여',variable=gender)
+
+        genderM.grid(row=4, column=1,sticky='w',padx=50)
+        genderF.grid(row=4, column=1,sticky='e',padx=50)
+
+        birth=Label(addAnmWindow,text="생년월일")
+        birth.grid(row=6, column=0)
+
+        birthframe=Frame(addAnmWindow)
+        birthframe.grid(row=6, column=1)
+
+        yearBox=ttk.Combobox(birthframe,height=0, width=4, values=[i for i in range(1950,2023)])
+        yearBox.grid(row=0, column=0)
+
+        year=Label(birthframe,text="년")
+        year.grid(row=0, column=1)
+
+        monthBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,13)])
+        monthBox.grid(row=0, column=2)
+
+        month=Label(birthframe,text="월")
+        month.grid(row=0, column=3)
+
+        dayBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,32)])
+        dayBox.grid(row=0, column=4)
+
+        day=Label(birthframe,text="일")
+        day.grid(row=0, column=5)
+
+        breed=Label(addAnmWindow,text="품종")
+        breed.grid(row=9, column=0)
+
+        breedentry=Entry(addAnmWindow)
+        breedentry.grid(row=9, column=1)
+
+        register=Button(addAnmWindow, text="등록하기")
+        register.grid(row=11, column=1, sticky=W+E+N+S)
+
+    #동물 종류 추가
+    def addBreed():
+        addBreedWindow=Tk()
+        addBreedWindow.title("동물 품종 추가")
+
+        breed=Label(addBreedWindow,text="품종")
+        breed.grid(row=2, column=0)
+
+        breedEntry=Entry(addBreedWindow)
+        breedEntry.grid(row=2, column=1)
+
+        food=Label(addBreedWindow,text="먹이")
+        food.grid(row=4, column=0)
+
+        foodEntry=Entry(addBreedWindow)
+        foodEntry.grid(row=4, column=1)
+
+        zone=Label(addBreedWindow,text="구역")
+        zone.grid(row=6, column=0)
+
+        zoneEntry=Entry(addBreedWindow)
+        zoneEntry.grid(row=6, column=1)
+
+        register=Button(addBreedWindow, text="추가하기")
+        register.grid(row=8, column=1, sticky=W+E+N+S)
+
+
+    
+    addAnmButton=Button(frame1,text="새로운 동물 개체\n등록하기",command=addAnm ,bg="white")
+    addBreedButton=Button(frame1,text="새로운 동물 종류\n추가하기",command=addBreed ,bg="white")
+
+    addAnmButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
+    addBreedButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
+
+
+
+    #직원관리
+    #직원 추가/삭제
+    def manageStaff():
+        addStaffWindow=Tk()
+        addStaffWindow.title("직원 추가")
+
+        #직원 등록
+        name=Label(addStaffWindow,text="이름")
+        name.grid(row=2, column=0)
+
+        nameentry=Entry(addStaffWindow)
+        nameentry.grid(row=2, column=1)
+
+        birth=Label(addStaffWindow,text="생년월일")
+        birth.grid(row=4, column=0)
+
+        birthframe=Frame(addStaffWindow)
+        birthframe.grid(row=4, column=1)
+
+        yearBox=ttk.Combobox(birthframe,height=0, width=4, values=[i for i in range(1950,2023)])
+        yearBox.grid(row=0, column=0)
+
+        year=Label(birthframe,text="년")
+        year.grid(row=0, column=1)
+
+        monthBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,13)])
+        monthBox.grid(row=0, column=2)
+
+        month=Label(birthframe,text="월")
+        month.grid(row=0, column=3)
+
+        dayBox=ttk.Combobox(birthframe, height=0, width=4, values=[i for i in range(1,32)])
+        dayBox.grid(row=0, column=4)
+
+        day=Label(birthframe,text="일")
+        day.grid(row=0, column=5)
+
+        phone=Label(addStaffWindow,text="전화번호")
+        phone.grid(row=6, column=0)
+
+        phoneentry=Entry(addStaffWindow)
+        phoneentry.grid(row=6, column=1)
+
+        zoneM=Label(addStaffWindow,text="담당구역")
+        zoneM.grid(row=8, column=0)
+
+        zoneM=Entry(addStaffWindow)
+        zoneM.grid(row=8, column=1)
+
+        account=Label(addStaffWindow,text="계좌번호")
+        account.grid(row=10, column=0)
+
+        account=Entry(addStaffWindow)
+        account.grid(row=10, column=1)
+
+
+        register=Button(addStaffWindow, text="등록하기")
+        register.grid(row=12, column=1, sticky=W+E+N+S)
+
+    #직원 검색/삭제
+    def searchStaff():
+        searchStaffWindow=Tk()
+        searchStaffWindow.title("직원 검색")
+
+        searchS=Label(searchStaffWindow,text="직원명")
+        searchS.grid(row=2, column=0)
+
+        searchSEntry=Entry(searchStaffWindow)
+        searchSEntry.grid(row=2, column=1)
+
+        searchButton=Button(searchStaffWindow,text="검색")
+        searchButton.grid(row=2, column=2)
+
+        register=Button(searchStaffWindow, text="삭제하기")
+        register.grid(row=8, column=1, sticky=W+E+N+S)
+    
+    addStaffButton=Button(frame2,text="새로운 직원\n등록하기",command=manageStaff ,bg="white")
+    manageStaffButton=Button(frame2,text="직원 관리",command=searchStaff ,bg="white")
+
+    addStaffButton.pack(fill="both",expand=True,side="left",pady=50,padx=10)
+    manageStaffButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
+
+
+
+
+
+    #주차관리
+
+
+
+
+    #고객관리
+
+
+
+
+    #예매관리
+
+    #예약목록 테이블
+    rsvColumn =["예약자명","예약일자","인원"]
+    rsvtable=ttk.Treeview(frame5, columns=rsvColumn)
+
+    rsvtable.column("#0",width=10, anchor="center")
+    rsvtable.heading("#0", text="index")
+
+    for i in rsvColumn:
+        rsvtable.column(i,width=100, anchor="center")
+        rsvtable.heading(i, text=i)
+
+
+    rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
+
+    rsvtable.pack()
+
+
+
+    #보고서
+
 
     menu.add(frame1,text="동물 관리")
     menu.add(frame2,text="직원 관리")
@@ -35,11 +254,11 @@ def admin():
 
     adminWindow.mainloop()
 
-
 #회원가입
 def sign():
     idCheck = False
     signWindow = Tk()
+    signWindow.geometry("320x178-150+150")
     
     ID=Label(signWindow,text="ID")
     ID.grid(row=0, column=0)
@@ -52,15 +271,12 @@ def sign():
         sql = "SELECT 아이디 FROM 회원 where 아이디='"+IDentry.get()+"'"
         cur.execute(sql)
         rows = cur.fetchall()
-        if rows==None:
+        if len(rows)==0:
             messagebox.showinfo("중복확인","사용 가능한 아이디입니다.")
             IDentry['state']="disabled"
             idCheck = TRUE
-            
         else:
             messagebox.showinfo("중복확인","이미 존재하는 아이디입니다.")
-        print(rows)     # 전체 rows 
-
 
     IDCheck=Button(signWindow, text="중복확인", command=checkID)
     IDCheck.grid(row=0, column=2)
@@ -202,7 +418,7 @@ for i in range(len(titletext)):
 menu=ttk.Notebook(window, width=400, height=300)
 
 loginframe=Frame(window)
-loginButton = Button(loginframe, text="로그인", command=Login)
+loginButton = Button(loginframe, text="로그인", command=Logout)
 
 adminButton=Button(loginframe, text="관리자모드", borderwidth=0, command=admin)
 adminButton.pack(side="left")
@@ -276,19 +492,8 @@ areaframe.pack(fill="both",expand=True)
 for i in range(6):
     areabutton[i].grid(row=i%3,column=i//3, sticky="news")
 
-'''
-animalphoto=[]
-animalname=["lion","토끼","곰"]
-for i in range(len(animalname)):
-    photoframe=Frame(frame2)
-    image1=ImageTk.PhotoImage(Image.open(r'C:\\Users\\이예림\\Desktop\\zoo\\lion.png'))
-    animalphoto.append(Label(photoframe,image=image1))
-    name=Label(photoframe,text=animalname[i])
-    animalphoto[i].pack()
-    name.pack()
-    photoframe.pack()
 
-'''
+
 # animalFrame=Frame(frame2, bg="yellow")
 # animalFrame.columnconfigure(tuple(range(4)),weight=1)
 # animalFrame.pack()
@@ -302,8 +507,10 @@ c=['red','orange','yellow','green','blue','purple']
 image = []
 for i in range(12):
     photoframe=Frame(anmFrame, bg="skyblue")
-    
-    image.append(ImageTk.PhotoImage(Image.open('C:\\Users\\이예림\\Desktop\\zoo\\lion.png').resize((94,100))))
+    url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'.format(animalname[i%len(animalname)])
+    res = requests.get(url)
+    image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
+
     img = Button(photoframe,image=image[i],bg=c[i%len(c)])
     name=Label(photoframe,text='lion')
     img.pack()
@@ -375,16 +582,8 @@ def memberresv():
 
     resv=Button(reservationwindow, text="확인", command=memberresv)
     resv.grid(row=8, column=1, sticky=W+E+N+S)
-'''    
-    print(id)
-    print(type(id))
-    if id=="":
-        Login()
-        if id!="":
-            reservationwindow.mainloop()
-    else:
-        reservationwindow.mainloop()
-'''
+
+    reservationwindow.mainloop()
 
 #로그인
 
@@ -392,6 +591,8 @@ def memberLoginFunc():
     print(id)
     if id=='':
         Login()
+        if id!="":
+            memberresv()
     else:
         memberresv()
 
@@ -569,23 +770,20 @@ if id=="":
 
 
 #테이블
-table=ttk.Treeview(frame4, columns=["예약자명","예약일자","인원"])
 
-table.column("#0",width=10, anchor="center")
-table.heading("#0", text="index")
+rsvColumn =["예약자명","예약일자","인원"]
+rsvtable=ttk.Treeview(frame4, columns=rsvColumn)
 
-table.column("예약자명",width=100, anchor="center")
-table.heading("예약자명", text="예약자명")
+rsvtable.column("#0",width=10, anchor="center")
+rsvtable.heading("#0", text="index")
 
-table.column("예약일자",width=100, anchor="center")
-table.heading("예약일자", text="예약일자")
+for i in rsvColumn:
+    rsvtable.column(i,width=100, anchor="center")
+    rsvtable.heading(i, text=i)
 
-table.column("인원",width=100, anchor="center")
-table.heading("인원", text="인원")
+rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
 
-table.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
-
-table.pack()
+rsvtable.pack()
 searchButton.pack()
 
 window.mainloop()
