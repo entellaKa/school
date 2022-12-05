@@ -8,7 +8,7 @@ from datetime import datetime
 
 id=""
 con = pymysql.connect(host='localhost', user='root', password='0000',db='동물원', charset='utf8') # 한글처리 (charset = 'utf8')
-url = 'https://github.com/entellaKa/school/blob/main/secondGrade/databaseProject/{}.png?raw=true'
+url = 'https://raw.githubusercontent.com/entellaKa/school/hojae/secondGrade/databaseProject/{}.png?raw=true'
 
 #로그인/로그아웃
 def Logout():
@@ -109,7 +109,6 @@ def admin():
             con.commit()
             messagebox.showinfo("동물등록", "새로운 동물이 추가되었습니다")
 
-
         register=Button(addAnmWindow, text="등록하기", command=animalRegisterFunc)
         register.grid(row=11, column=1, sticky=W+E+N+S)
 
@@ -142,7 +141,6 @@ def admin():
             cur = con.cursor()
             cur.execute(selectBreedNoSQL)
             area = cur.fetchone()
-            print(breedEntry.get(), foodEntry.get(), area[0])
             insertSqQL = "insert into 종류 values(0,'{}','{}',{});".format(breedEntry.get(), foodEntry.get(), area[0])
             cur.execute(insertSqQL)
             con.commit()
@@ -247,7 +245,6 @@ def admin():
 
         def delete():
             value = staffTable.item(staffTable.focus())
-            print(value["values"])
             cur = con.cursor()
             insertSqQL = "delete from 직원 where 이름 = '{}'".format(value["values"][0])
             cur.execute(insertSqQL)
@@ -303,7 +300,6 @@ def admin():
 
     for user in users:
         userTable.insert("","end", user[0], text=0, values=user)
-    
     userTable.pack()
 
     #예매관리
@@ -319,8 +315,6 @@ def admin():
         rsvtable.column(i,width=90, anchor="center")
         rsvtable.heading(i, text=i)
 
-    rsvtable.insert("", "end",text=0,values=["김선재","2022.11.17","3명"])
-
     rsvtable.pack(fill="both")
     
     sql = "select 이름, 입장시기, 동행인_성인, 동행인_아이, 가격 from 회원, 입장객 where 아이디 = 회원번호"
@@ -328,7 +322,7 @@ def admin():
     cur.execute(sql)
     rows = cur.fetchall()
     for i in rows:
-        table.insert("","end",text=0, values=[i[0], i[1], i[2]+i[3], i[4]])
+        rsvtable.insert("","end",text=0, values=[i[0], i[1], i[2]+i[3], i[4]])
 
     #동물보고서
     animalColumn = ["이름","생일","종류","성별","사육사","먹이","구역"]
@@ -346,7 +340,6 @@ def admin():
     animalTable.column("#0", width=0)
     for i in rows:
         animalTable.insert("","end", id=i[0], values=i)
-
     animalTable.pack()
 
     menu.add(frame1,text="동물 관리")
@@ -446,7 +439,6 @@ def sign():
             sql="select * from 회원"
             cur.execute(sql)
             rows = cur.fetchall()
-            print(rows) 
             con.commit()
             messagebox.showinfo("가입완료","가입이 완료되었습니다.")
             signWindow.destroy()
@@ -476,9 +468,7 @@ def Login():
     PWentry=Entry(loginWindow, show="*")
     PWentry.grid(row=1, column=1)
 
-
     def loginF():
-        print(loginWindow.winfo_width(),loginWindow.winfo_height())
 
         sql="select * from 회원 where 아이디='{}' && 패스워드='{}'".format(IDentry.get(),PWentry.get())
         cur=con.cursor()
@@ -550,7 +540,7 @@ def mapA():
     rows = cur.fetchall()
 
     for i in rows:
-        res = requests.get(url.format(i))
+        res = requests.get(url.format(i[0]))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapAFrame, image=image[i])
         pic.pack()
@@ -567,7 +557,7 @@ def mapB():
     rows = cur.fetchall()
 
     for i in rows:
-        res = requests.get(url.format(i))
+        res = requests.get(url.format(i[0]))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapBFrame, image=image[i])
         pic.pack()
@@ -584,7 +574,7 @@ def mapC():
     rows = cur.fetchall()
 
     for i in rows:
-        res = requests.get(url.format(i))
+        res = requests.get(url.format(i[0]))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapCFrame, image=image[i])
         pic.pack()
@@ -601,7 +591,7 @@ def mapD():
     rows = cur.fetchall()
 
     for i in rows:
-        res = requests.get(url.format(i))
+        res = requests.get(url.format(i[0]))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapDFrame, image=image[i])
         pic.pack()
@@ -618,7 +608,7 @@ def mapE():
     rows = cur.fetchall()
 
     for i in rows:
-        res = requests.get(url.format(i))
+        res = requests.get(url.format(i[0]))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapEFrame, image=image[i])
         pic.pack()
@@ -635,7 +625,7 @@ def mapF():
     rows = cur.fetchall()
 
     for i in rows:
-        res = requests.get(url.format(i))
+        res = requests.get(url.format(i[0]))
         image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
         pic = Label(mapFFrame, image=image[i])
         pic.pack()
@@ -662,9 +652,6 @@ def animalInfo(_name):
     infoWindow = Tk()
     infoWindow.title("동물 정보")
 
-    #_name = name['text']
-    print(_name)
-
     res = requests.get(url.format(_name))
     image = ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100)))
 
@@ -676,7 +663,7 @@ def animalInfo(_name):
 #next버튼 prev버튼
 page = 0;
 def paging(b):
-    if b == 1 and page<=3:
+    if b == 1 and page<=n//8:
         cur = con.cursor()
         sql="select 이름 from 동물"
         cur.execute(sql)
@@ -688,7 +675,7 @@ def paging(b):
             res = requests.get(url.format(rows[i%len(rows)]))
             image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
             i["image"] = image
-    elif b == 0 and page>=1:
+    elif b == 0 and page>=0:
         cur = con.cursor()
         sql="select 이름 from 동물"
         cur.execute(sql)
@@ -720,15 +707,17 @@ anmPicFrame=Frame(frame2, bg="yellow")
 anmPicFrame.pack()
 animalname=[]#["사자","토끼","곰"]
 cur = con.cursor()
-sql="select 이름 from 동물 limit 8"
+sql="select 이름 from 동물"
 cur.execute(sql)
 rows = cur.fetchall()
+n = len(rows)
+rows = rows[:8]
 
 #c = ['red','orange','yellow','green','blue','purple']
 image = []
 
 for i in range(len(rows)):
-    res = requests.get(url.format(rows[i%len(rows)]))
+    res = requests.get(url.format(rows[i][0]))
     photoframe=Frame(anmPicFrame, bg="skyblue")
     image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
 
@@ -857,9 +846,9 @@ def resvation():
         def pay():
             birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
             sql = "insert into 입장객 values(0,'{}',{},'{}','{}',{},{},{})".format(id, tool.get(), datetime.now().date(), birth, adultEntry.get(), kidEntry.get(), totalPrice)
-            print(sql)
             cur=con.cursor()
             cur.execute(sql)
+            sql = "update 회원 set 포인트 = 포인트 + {} where 아이디 = '{}'".format(totalPrice/200, id)
             con.commit()
             messagebox.showinfo("결제 완료","결제가 완료되었습니다.")
             payWindow.destroy()
@@ -931,6 +920,7 @@ guestButton.pack(fill="both",expand=True,side="right",pady=50,padx=10)
 #예매 내역
 def guestreceipt():
     if id != "":
+        table.delete()
         sql = "select 이름, 입장시기, 동행인_성인, 동행인_아이, 가격 from 회원, 입장객 where 아이디 = 회원번호 and 아이디 = '"+id+"'"
         cur = con.cursor()
         cur.execute(sql)
@@ -984,7 +974,8 @@ def guestreceipt():
         name = nameentry.get()
         birth = "{}-{}-{}".format(yearBox.get(), monthBox.get(), dayBox.get())
         number = numberentry.get()
-        
+        table.delete()
+
         sql = "select 이름, 입장시기, 동행인_성인, 동행인_아이, 가격 from 회원, 입장객 where 아이디 = 회원번호 and 이름 = '{}' and 생년월일 = '{}' and 휴대폰번호 = '{}'"
         cur = con.cursor()
         cur.execute(sql.format(name, birth, number))
