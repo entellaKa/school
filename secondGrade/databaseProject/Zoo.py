@@ -50,10 +50,10 @@ def admin():
 
         gender=Label(addAnmWindow,text="성별")
         gender.grid(row=4,column=0)
-        gender=StringVar()
+        gender=IntVar()
 
-        genderM=Radiobutton(addAnmWindow, text='남',variable=gender, value="M")
-        genderF=Radiobutton(addAnmWindow, text='여',variable=gender, value="F")
+        genderM=Radiobutton(addAnmWindow, text='남',variable=gender, value=0)
+        genderF=Radiobutton(addAnmWindow, text='여',variable=gender, value=1)
 
         genderM.grid(row=4, column=1,sticky='w',padx=50)
         genderF.grid(row=4, column=1,sticky='e',padx=50)
@@ -104,7 +104,8 @@ def admin():
             breed = cur.fetchone()
             cur.execute(selectTamerNoSQL)
             tamer = cur.fetchone()
-            insertSqQL = "insert into 동물 values(0,'{}',{},'{}','{}','{}')".format(nameentry.get(), birth, breed[0], genderM.getboolean, tamer[0])
+            print(birth, breed[0], gender.get(), tamer[0])
+            insertSqQL = "insert into 동물 values(0,'{}','{}','{}','{}','{}')".format(nameentry.get(), birth, breed[0], gender.get(), tamer[0])
             cur.execute(insertSqQL)
             con.commit()
             messagebox.showinfo("동물등록", "새로운 동물이 추가되었습니다")
@@ -661,8 +662,9 @@ def animalInfo(_name):
     nameLabel.pack()
 
 #next버튼 prev버튼
-page = 0;
+page = 0
 def paging(b):
+    global page
     if b == 1 and page<=n//8:
         cur = con.cursor()
         sql="select 이름 from 동물"
@@ -671,10 +673,15 @@ def paging(b):
         rows = rows[page*8:(page+1)*8]
 
         pictures = anmPicFrame.grid_slaves()
-        for i in pictures:
-            res = requests.get(url.format(rows[i%len(rows)]))
+        image = []
+
+        for i in range(len(rows)):
+            res = requests.get(url.format(rows[i][0]))
             image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
-            i["image"] = image
+            pic = pictures[i].pack_slaves()
+            pic[0]["image"] = image
+        page = page + 1
+
     elif b == 0 and page>=0:
         cur = con.cursor()
         sql="select 이름 from 동물"
@@ -683,10 +690,14 @@ def paging(b):
         rows = rows[page*8:(page+1)*8]
 
         pictures = anmPicFrame.grid_slaves()
-        for i in pictures:
-            res = requests.get(url.format(rows[i%len(rows)]))
+        image = []
+
+        for i in range(len(rows)):
+            res = requests.get(url.format(rows[i][0]))
             image.append(ImageTk.PhotoImage(Image.open(BytesIO(res.content)).resize((94,100))))
-            i["image"] = image
+            pic = pictures[i].pack_slaves()
+            pic[0]["image"] = image        
+        page = page - 1
 
 #동물정보
 loginframe.pack(fill="x")
